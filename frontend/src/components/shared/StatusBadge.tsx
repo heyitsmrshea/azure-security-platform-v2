@@ -58,7 +58,7 @@ export function StatusBadge({
       icon: HelpCircle,
       bg: 'bg-background-tertiary',
       text: 'text-foreground-muted',
-      border: 'border-border-DEFAULT',
+      border: 'border-divider',
       label: 'Unknown',
     },
   }

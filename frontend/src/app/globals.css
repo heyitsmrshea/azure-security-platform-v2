@@ -32,11 +32,11 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-border-DEFAULT rounded-full;
+    @apply bg-background-tertiary rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-border-hover;
+    @apply bg-[#475569];
   }
 
   /* Selection */
@@ -48,7 +48,7 @@
 @layer components {
   /* Card component */
   .card {
-    @apply bg-background-secondary border border-border-DEFAULT rounded-card p-card shadow-card;
+    @apply bg-background-secondary border border-divider rounded-card p-card shadow-card;
   }
 
   .card-hover {
@@ -123,12 +123,12 @@
   }
 
   .btn-secondary {
-    @apply bg-background-tertiary hover:bg-border-hover text-foreground-primary px-4 py-2 rounded-button font-medium transition-colors border border-border-DEFAULT;
+    @apply bg-background-tertiary hover:bg-divider-hover text-foreground-primary px-4 py-2 rounded-button font-medium transition-colors border border-divider;
   }
 
   /* Table styles */
   .table-row {
-    @apply border-b border-border-DEFAULT hover:bg-background-tertiary/50 transition-colors;
+    @apply border-b border-divider hover:bg-background-tertiary/50 transition-colors;
   }
 
   .table-header {
@@ -141,7 +141,7 @@
 
   /* Input styles */
   .input {
-    @apply bg-background-tertiary border border-border-DEFAULT rounded-button px-3 py-2 text-foreground-primary placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors;
+    @apply bg-background-tertiary border border-divider rounded-button px-3 py-2 text-foreground-primary placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors;
   }
 
   /* Metric card layout */

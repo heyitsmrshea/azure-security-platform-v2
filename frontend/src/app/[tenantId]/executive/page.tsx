@@ -278,7 +278,7 @@ export default function ExecutiveDashboardPage({
                     {data.recovery_readiness.rto_actual_hours}h / {data.recovery_readiness.rto_target_hours}h target
                   </div>
                 </div>
-                <div className="w-px h-12 bg-border-DEFAULT" />
+                <div className="w-px h-12 bg-divider" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-foreground-secondary">RPO</span>

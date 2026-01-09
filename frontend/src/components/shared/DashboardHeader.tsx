@@ -38,7 +38,7 @@ export function DashboardHeader({
   }
 
   return (
-    <header className={cn('border-b border-border-DEFAULT bg-background-secondary', className)}>
+    <header className={cn('border-b border-divider bg-background-secondary', className)}>
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left: Logo and Navigation */}
@@ -56,7 +56,7 @@ export function DashboardHeader({
             </div>
 
             {/* Tenant Selector */}
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background-tertiary hover:bg-border-DEFAULT transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background-tertiary hover:bg-divider transition-colors">
               <span className="text-sm font-medium text-foreground-primary">
                 {tenantName}
               </span>

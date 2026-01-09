@@ -48,8 +48,8 @@ module.exports = {
           hover: '#2563EB',      // Blue 600
           muted: '#1E3A5F',      // Darker blue for backgrounds
         },
-        // Border
-        border: {
+        // Border/divider colors
+        divider: {
           DEFAULT: '#334155',    // Slate 700
           hover: '#475569',      // Slate 600
         },
