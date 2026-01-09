@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Shield, RefreshCw, Download, ChevronDown, Clock, Eye, EyeOff } from 'lucide-react'
@@ -31,6 +32,7 @@ export function DashboardHeader({
 }: DashboardHeaderProps) {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const { isSimplified, toggleViewMode } = useViewMode()
+  const router = useRouter()
   const pathname = usePathname()
 
   const getFreshnessStatus = () => {
@@ -78,7 +80,7 @@ export function DashboardHeader({
                   { id: 'globex', name: 'Globex Industries', securityScore: 58.1, status: 'critical' },
                   { id: 'initech', name: 'Initech Solutions', securityScore: 91.0, status: 'healthy' },
                 ]}
-                onSwitch={(id) => { window.location.href = `/${id}/executive` }}
+                onSwitch={(id) => router.push(`/${id}/executive`)}
               />
             </div>
 
@@ -147,11 +149,14 @@ export function DashboardHeader({
 
           {/* Navigation Tabs */}
           <nav className="flex items-center gap-1 mt-4">
-            <NavTab href="/demo/executive" active={title.includes('Executive')}>
+            <NavTab href={`/${tenantId}/executive`} active={title.includes('Executive')}>
               Executive View
             </NavTab>
-            <NavTab href="/demo/it-staff" active={title.includes('IT Staff')}>
+            <NavTab href={`/${tenantId}/it-staff`} active={title.includes('IT Staff')}>
               IT Staff View
+            </NavTab>
+            <NavTab href={`/${tenantId}/compliance`} active={title.includes('Compliance')}>
+              Compliance View
             </NavTab>
           </nav>
         </div>
@@ -176,7 +181,7 @@ interface NavTabProps {
 
 function NavTab({ href, active, children }: NavTabProps) {
   return (
-    <a
+    <Link
       href={href}
       className={cn(
         'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
@@ -186,6 +191,6 @@ function NavTab({ href, active, children }: NavTabProps) {
       )}
     >
       {children}
-    </a>
+    </Link>
   )
 }
