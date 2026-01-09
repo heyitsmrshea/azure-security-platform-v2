@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   Azure Security Platform V2 - Global Styles
+   Dark Theme Only - Enterprise Security Aesthetic
+   ============================================================================ */
+
+@layer base {
+  /* Force dark mode */
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-background-primary text-foreground-primary font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-DEFAULT rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-hover;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-accent/30 text-foreground-primary;
+  }
+}
+
+@layer components {
+  /* Card component */
+  .card {
+    @apply bg-background-secondary border border-border-DEFAULT rounded-card p-card shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-card-hover;
+  }
+
+  /* KPI Display */
+  .kpi-value {
+    @apply text-kpi text-foreground-primary tracking-tight;
+  }
+
+  .kpi-label {
+    @apply text-label uppercase text-foreground-muted tracking-wider;
+  }
+
+  /* Section header */
+  .section-title {
+    @apply text-section text-foreground-primary;
+  }
+
+  /* Body text */
+  .body-text {
+    @apply text-body text-foreground-secondary;
+  }
+
+  /* Severity badges */
+  .badge-critical {
+    @apply bg-severity-critical/20 text-severity-critical border border-severity-critical/30;
+  }
+
+  .badge-high {
+    @apply bg-severity-high/20 text-severity-high border border-severity-high/30;
+  }
+
+  .badge-medium {
+    @apply bg-severity-medium/20 text-severity-medium border border-severity-medium/30;
+  }
+
+  .badge-low {
+    @apply bg-severity-low/20 text-severity-low border border-severity-low/30;
+  }
+
+  /* Status indicators */
+  .status-healthy {
+    @apply text-status-success;
+  }
+
+  .status-warning {
+    @apply text-status-warning;
+  }
+
+  .status-critical {
+    @apply text-status-error;
+  }
+
+  /* Trend indicators */
+  .trend-up {
+    @apply text-status-success;
+  }
+
+  .trend-down {
+    @apply text-status-error;
+  }
+
+  .trend-stable {
+    @apply text-foreground-muted;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-accent hover:bg-accent-hover text-foreground-primary px-4 py-2 rounded-button font-medium transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-background-tertiary hover:bg-border-hover text-foreground-primary px-4 py-2 rounded-button font-medium transition-colors border border-border-DEFAULT;
+  }
+
+  /* Table styles */
+  .table-row {
+    @apply border-b border-border-DEFAULT hover:bg-background-tertiary/50 transition-colors;
+  }
+
+  .table-header {
+    @apply text-label text-foreground-muted uppercase tracking-wider py-3 px-4 text-left;
+  }
+
+  .table-cell {
+    @apply py-3 px-4 text-body text-foreground-secondary;
+  }
+
+  /* Input styles */
+  .input {
+    @apply bg-background-tertiary border border-border-DEFAULT rounded-button px-3 py-2 text-foreground-primary placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors;
+  }
+
+  /* Metric card layout */
+  .metric-card {
+    @apply card flex flex-col;
+  }
+
+  .metric-card-header {
+    @apply flex items-center justify-between mb-2;
+  }
+
+  .metric-card-value {
+    @apply text-4xl font-bold text-foreground-primary;
+  }
+
+  .metric-card-label {
+    @apply text-sm text-foreground-muted uppercase tracking-wide;
+  }
+
+  .metric-card-trend {
+    @apply flex items-center gap-1 text-sm;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-in {
+    @apply animate-fade-in;
+  }
+
+  /* Gradient text (use sparingly) */
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent to-chart-tertiary bg-clip-text text-transparent;
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background-primary;
+  }
+}
