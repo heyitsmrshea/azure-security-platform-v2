@@ -102,10 +102,10 @@ export function DashboardHeader({
 
         {/* Navigation Tabs */}
         <nav className="flex items-center gap-1 mt-4">
-          <NavTab href="/demo/executive" active>
+          <NavTab href="/demo/executive" active={title.includes('Executive')}>
             Executive View
           </NavTab>
-          <NavTab href="/demo/it-staff">
+          <NavTab href="/demo/it-staff" active={title.includes('IT Staff')}>
             IT Staff View
           </NavTab>
         </nav>
