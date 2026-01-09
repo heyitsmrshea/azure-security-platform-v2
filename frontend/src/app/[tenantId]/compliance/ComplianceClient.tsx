@@ -20,10 +20,10 @@ import { EvidenceExport } from '@/components/compliance/EvidenceExport'
 
 // Mock data
 const mockFrameworks = [
-    { id: 'soc2', name: 'SOC 2 Type II', version: '2017', compliance_percent: 85.0, total: 10, passing: 7, failing: 1, partial: 2 },
-    { id: 'iso27001', name: 'ISO/IEC 27001', version: '2022', compliance_percent: 80.0, total: 8, passing: 6, failing: 0, partial: 2 },
-    { id: 'cis', name: 'CIS Azure Benchmark', version: '2.0', compliance_percent: 75.0, total: 6, passing: 4, failing: 1, partial: 1 },
-    { id: 'pci', name: 'PCI DSS', version: '4.0', compliance_percent: 100.0, total: 3, passing: 3, failing: 0, partial: 0 },
+    { id: 'soc2', name: 'SOC 2 Type II', lookup: 'SOC 2', version: '2017', compliance_percent: 85.0, total: 10, passing: 7, failing: 1, partial: 2 },
+    { id: 'iso27001', name: 'ISO/IEC 27001', lookup: 'ISO 27001', version: '2022', compliance_percent: 80.0, total: 8, passing: 6, failing: 0, partial: 2 },
+    { id: 'cis', name: 'CIS Azure Benchmark', lookup: 'CIS', version: '2.0', compliance_percent: 75.0, total: 6, passing: 4, failing: 1, partial: 1 },
+    { id: 'pci', name: 'PCI DSS', lookup: 'PCI-DSS', version: '4.0', compliance_percent: 100.0, total: 3, passing: 3, failing: 0, partial: 0 },
 ]
 
 const mockControls = [
@@ -44,8 +44,10 @@ export function ComplianceClient({ tenantId }: { tenantId: string }) {
     const [activeView, setActiveView] = useState<'frameworks' | 'controls' | 'mapping'>('frameworks')
     const [isEvidenceExportOpen, setIsEvidenceExportOpen] = useState(false)
 
-    const filteredControls = selectedFramework
-        ? mockControls.filter(c => c.frameworks.some(f => f.toLowerCase().includes(selectedFramework.toLowerCase())))
+    const currentFramework = selectedFramework ? mockFrameworks.find(f => f.id === selectedFramework) : null
+
+    const filteredControls = currentFramework
+        ? mockControls.filter(c => c.frameworks.some(f => f === currentFramework.lookup))
         : mockControls
 
     const getStatusIcon = (status: string) => {
