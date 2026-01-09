@@ -5,9 +5,10 @@ import { MetricCard, ScoreCard } from '@/components/shared/MetricCard'
 import { StatusBadge, SeverityBadge } from '@/components/shared/StatusBadge'
 import { RiskCard } from '@/components/executive/RiskCard'
 import { TrendChart, FindingAgeChart } from '@/components/executive/TrendChart'
+import { HealthGrade } from '@/components/executive/HealthGrade'
 import { ExecutiveDashboard } from '@/types/dashboard'
-import { 
-  Shield, 
+import {
+  Shield,
   ShieldCheck,
   AlertTriangle,
   HardDrive,
@@ -222,7 +223,11 @@ export default function ExecutiveDashboardPage({
           <h2 className="text-sm font-medium text-foreground-muted uppercase tracking-wider mb-4">
             Security Posture
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Health Grade - Large visual grade */}
+            <div className="card flex items-center justify-center py-6">
+              <HealthGrade score={data.security_score.current_score} />
+            </div>
             <ScoreCard
               label="Security Score"
               score={data.security_score.current_score}
@@ -311,8 +316,8 @@ export default function ExecutiveDashboardPage({
                     <span className="font-medium text-status-success">{data.mfa_coverage.admin_coverage_percent}%</span>
                   </div>
                   <div className="h-2 bg-background-tertiary rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-status-success rounded-full" 
+                    <div
+                      className="h-full bg-status-success rounded-full"
                       style={{ width: `${data.mfa_coverage.admin_coverage_percent}%` }}
                     />
                   </div>
@@ -323,8 +328,8 @@ export default function ExecutiveDashboardPage({
                     <span className="font-medium text-foreground-primary">{data.mfa_coverage.user_coverage_percent}%</span>
                   </div>
                   <div className="h-2 bg-background-tertiary rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent rounded-full" 
+                    <div
+                      className="h-full bg-accent rounded-full"
                       style={{ width: `${data.mfa_coverage.user_coverage_percent}%` }}
                     />
                   </div>
@@ -413,7 +418,7 @@ export default function ExecutiveDashboardPage({
                 </span>
               </div>
               <div className="h-2 bg-background-tertiary rounded-full overflow-hidden">
-                <div 
+                <div
                   className={`h-full rounded-full ${data.patch_sla.compliance_percent >= data.patch_sla.target_percent ? 'bg-status-success' : 'bg-status-warning'}`}
                   style={{ width: `${data.patch_sla.compliance_percent}%` }}
                 />

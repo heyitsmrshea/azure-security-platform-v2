@@ -14,7 +14,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 import httpx
 
-from .routes import executive, it_staff, tenants, reports, auth
+from .routes import executive, it_staff, tenants, reports, auth, msp, compliance
 from ..services.cache_service import CacheService
 from ..services.cosmos_service import CosmosService
 
@@ -297,6 +297,20 @@ app.include_router(
     reports.router,
     prefix="/api/{tenant_id}/reports",
     tags=["Reports"],
+    dependencies=[Depends(get_current_user)],
+)
+
+app.include_router(
+    msp.router,
+    prefix="/api/msp",
+    tags=["MSP Dashboard"],
+    dependencies=[Depends(get_current_user)],
+)
+
+app.include_router(
+    compliance.router,
+    prefix="/api/{tenant_id}/compliance",
+    tags=["Compliance"],
     dependencies=[Depends(get_current_user)],
 )
 

@@ -30,7 +30,7 @@ export const queryKeys = {
   guestUsers: (tenantId: string) => ['it-staff', 'guest-users', tenantId] as const,
   thirdPartyApps: (tenantId: string) => ['it-staff', 'third-party-apps', tenantId] as const,
   backupJobs: (tenantId: string) => ['it-staff', 'backup-jobs', tenantId] as const,
-  auditLogs: (tenantId: string, filters?: Record<string, string>) => ['it-staff', 'audit-logs', tenantId, filters] as const,
+  auditLogs: (tenantId: string, filters?: { category?: string; days?: number }) => ['it-staff', 'audit-logs', tenantId, filters] as const,
 
   // Tenants
   tenants: () => ['tenants'] as const,

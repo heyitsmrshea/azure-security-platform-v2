@@ -7,6 +7,8 @@ import { AlertQueue } from '@/components/it-staff/AlertQueue'
 import { VulnerabilityView } from '@/components/it-staff/VulnerabilityView'
 import { AuditTrail, HighRiskOperations } from '@/components/it-staff/AuditTrail'
 import { DataTable } from '@/components/it-staff/DataTable'
+import { DepartmentBreakdown, mockMFAByDepartment, mockDevicesByDepartment } from '@/components/it-staff/DepartmentBreakdown'
+import { OffboardingStatus } from '@/components/it-staff/OffboardingStatus'
 import { cn, getTimeAgo } from '@/lib/utils'
 import {
   Bell,
@@ -21,6 +23,7 @@ import {
   HardDrive,
   FileText,
   AlertTriangle,
+  UserMinus,
 } from 'lucide-react'
 
 // Mock data
@@ -147,7 +150,7 @@ const mockHighRiskOps = [
   { operation: 'Conditional Access policy disabled', initiated_by: 'Security Admin', target: 'Block legacy auth policy', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), risk_reason: 'Security control disabled' },
 ]
 
-type TabId = 'alerts' | 'vulnerabilities' | 'identity' | 'devices' | 'vendor' | 'backup' | 'audit'
+type TabId = 'alerts' | 'vulnerabilities' | 'identity' | 'devices' | 'vendor' | 'backup' | 'audit' | 'offboarding'
 
 export default function ITStaffDashboardPage({
   params,
@@ -164,6 +167,7 @@ export default function ITStaffDashboardPage({
     { id: 'vendor', label: 'Third-Party Risk', icon: <AppWindow className="w-4 h-4" /> },
     { id: 'backup', label: 'Backup & Recovery', icon: <HardDrive className="w-4 h-4" /> },
     { id: 'audit', label: 'Audit Trail', icon: <FileText className="w-4 h-4" /> },
+    { id: 'offboarding', label: 'Offboarding', icon: <UserMinus className="w-4 h-4" /> },
   ]
 
   return (
@@ -288,6 +292,20 @@ export default function ITStaffDashboardPage({
                     },
                   ]}
                   searchKeys={['display_name', 'email']}
+                />
+              </div>
+
+              {/* Department Breakdowns */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <DepartmentBreakdown
+                  title="MFA Coverage by Department"
+                  data={mockMFAByDepartment}
+                  type="mfa"
+                />
+                <DepartmentBreakdown
+                  title="Device Compliance by Department"
+                  data={mockDevicesByDepartment}
+                  type="device"
                 />
               </div>
             </div>
@@ -476,6 +494,10 @@ export default function ITStaffDashboardPage({
               <AuditTrail logs={mockAuditLogs} />
               <HighRiskOperations operations={mockHighRiskOps} />
             </div>
+          )}
+
+          {activeTab === 'offboarding' && (
+            <OffboardingStatus />
           )}
         </div>
       </main>
