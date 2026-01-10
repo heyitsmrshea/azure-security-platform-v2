@@ -22,7 +22,8 @@ const reportTypes: { id: ReportType; name: string; description: string }[] = [
     { id: 'audit', name: 'Audit Trail', description: 'Administrative actions and changes' },
 ]
 
-export function ExportModal({ isOpen, onClose, tenantId, dashboardType }: ExportModalProps) {
+export function ExportModal({ isOpen, onClose, tenantId, dashboardType: _dashboardType }: ExportModalProps) {
+    void _dashboardType // Available for filtering report types by dashboard context
     const [selectedType, setSelectedType] = useState<ReportType>('executive')
     const [selectedFormat, setSelectedFormat] = useState<ReportFormat>('pdf')
     const [dateRange, setDateRange] = useState(30)
@@ -40,12 +41,14 @@ export function ExportModal({ isOpen, onClose, tenantId, dashboardType }: Export
                 report_type: selectedType,
                 format: selectedFormat,
                 date_range_days: dateRange,
-            }) as { report_id?: string; success?: boolean }
+            }) as { report_id?: string; success?: boolean; format?: string }
 
-            // Poll for completion (in production, use WebSocket or longer polling)
+            // Trigger download with format parameter
             if (response.report_id) {
-                // For demo, trigger download directly
-                const downloadUrl = `/api/${tenantId}/reports/download/${response.report_id}`
+                const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+                const downloadUrl = `${apiBase}/${tenantId}/reports/download/${response.report_id}?format=${selectedFormat}`
+                
+                // Open download in new tab
                 window.open(downloadUrl, '_blank')
                 onClose()
             }

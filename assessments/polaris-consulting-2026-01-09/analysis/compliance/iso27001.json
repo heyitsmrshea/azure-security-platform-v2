@@ -1,0 +1,577 @@
+{
+  "framework": {
+    "id": "iso27001",
+    "name": "ISO/IEC 27001:2022 Annex A",
+    "version": "2022"
+  },
+  "score": 93.9,
+  "controls": {
+    "total": 93,
+    "passed": 92,
+    "failed": 1
+  },
+  "failed_controls": [
+    "A.12.3.1"
+  ],
+  "control_status": [
+    {
+      "id": "5.1",
+      "name": "Policies for information security",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.2",
+      "name": "Information security roles and responsibilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.3",
+      "name": "Segregation of duties",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.4",
+      "name": "Management responsibilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.5",
+      "name": "Contact with authorities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.6",
+      "name": "Contact with special interest groups",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.7",
+      "name": "Threat intelligence",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.8",
+      "name": "Information security in project management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.9",
+      "name": "Inventory of information and other associated assets",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.10",
+      "name": "Acceptable use of information and other associated assets",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.11",
+      "name": "Return of assets",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.12",
+      "name": "Classification of information",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.13",
+      "name": "Labelling of information",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.14",
+      "name": "Information transfer",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.15",
+      "name": "Access control",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.16",
+      "name": "Identity management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.17",
+      "name": "Authentication information",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.18",
+      "name": "Access rights",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.19",
+      "name": "Information security in supplier relationships",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.20",
+      "name": "Addressing information security within supplier agreements",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.21",
+      "name": "Managing information security in the ICT supply chain",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.22",
+      "name": "Monitoring, review and change management of supplier services",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.23",
+      "name": "Information security for use of cloud services",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.24",
+      "name": "Information security incident management planning and preparation",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.25",
+      "name": "Assessment and decision on information security events",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.26",
+      "name": "Response to information security incidents",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.27",
+      "name": "Learning from information security incidents",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.28",
+      "name": "Collection of evidence",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.29",
+      "name": "Information security during disruption",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.30",
+      "name": "ICT readiness for business continuity",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.31",
+      "name": "Legal, statutory, regulatory and contractual requirements",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.32",
+      "name": "Intellectual property rights",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.33",
+      "name": "Protection of records",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.34",
+      "name": "Privacy and protection of PII",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.35",
+      "name": "Independent review of information security",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.36",
+      "name": "Compliance with policies, rules and standards",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.37",
+      "name": "Documented operating procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.1",
+      "name": "Screening",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.2",
+      "name": "Terms and conditions of employment",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.3",
+      "name": "Information security awareness, education and training",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.4",
+      "name": "Disciplinary process",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.5",
+      "name": "Responsibilities after termination or change of employment",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.6",
+      "name": "Confidentiality or non-disclosure agreements",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.7",
+      "name": "Remote working",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.8",
+      "name": "Information security event reporting",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.1",
+      "name": "Physical security perimeters",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.2",
+      "name": "Physical entry",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.3",
+      "name": "Securing offices, rooms and facilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.4",
+      "name": "Physical security monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.5",
+      "name": "Protecting against physical and environmental threats",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.6",
+      "name": "Working in secure areas",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.7",
+      "name": "Clear desk and clear screen",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.8",
+      "name": "Equipment siting and protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.9",
+      "name": "Security of assets off-premises",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.10",
+      "name": "Storage media",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.11",
+      "name": "Supporting utilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.12",
+      "name": "Cabling security",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.13",
+      "name": "Equipment maintenance",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.14",
+      "name": "Secure disposal or re-use of equipment",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.1",
+      "name": "User endpoint devices",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.2",
+      "name": "Privileged access rights",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.3",
+      "name": "Information access restriction",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.4",
+      "name": "Access to source code",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.5",
+      "name": "Secure authentication",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.6",
+      "name": "Capacity management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.7",
+      "name": "Protection against malware",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.8",
+      "name": "Management of technical vulnerabilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.9",
+      "name": "Configuration management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.10",
+      "name": "Information deletion",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.11",
+      "name": "Data masking",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.12",
+      "name": "Data leakage prevention",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.13",
+      "name": "Information backup",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.14",
+      "name": "Redundancy of information processing facilities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.15",
+      "name": "Logging",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.16",
+      "name": "Monitoring activities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.17",
+      "name": "Clock synchronization",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.18",
+      "name": "Use of privileged utility programs",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.19",
+      "name": "Installation of software on operational systems",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.20",
+      "name": "Networks security",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.21",
+      "name": "Security of network services",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.22",
+      "name": "Segregation of networks",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.23",
+      "name": "Web filtering",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.24",
+      "name": "Use of cryptography",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.25",
+      "name": "Secure development life cycle",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.26",
+      "name": "Application security requirements",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.27",
+      "name": "Secure system architecture and engineering principles",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.28",
+      "name": "Secure coding",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.29",
+      "name": "Security testing in development and acceptance",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.30",
+      "name": "Outsourced development",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.31",
+      "name": "Separation of development, test and production environments",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.32",
+      "name": "Change management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.33",
+      "name": "Test information",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.34",
+      "name": "Protection of information systems during audit testing",
+      "status": "pass",
+      "findings": []
+    }
+  ],
+  "findings_mapped": 1
+}

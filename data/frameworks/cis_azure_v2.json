@@ -1,0 +1,662 @@
+{
+  "framework": {
+    "id": "CIS_AZURE_V2",
+    "name": "CIS Microsoft Azure Foundations Benchmark",
+    "version": "2.0.0",
+    "release_date": "2023-06-15",
+    "url": "https://www.cisecurity.org/benchmark/azure"
+  },
+  "sections": [
+    {
+      "id": "1",
+      "name": "Identity and Access Management",
+      "controls": [
+        {
+          "id": "1.1",
+          "name": "Ensure Security Defaults is enabled on Microsoft Entra ID",
+          "description": "Security defaults in Microsoft Entra ID make it easier to be secure and help protect your organization.",
+          "rationale": "Security defaults provide secure default settings that we manage on behalf of organizations to keep customers safe until they are ready to manage their own identity security settings.",
+          "audit": "From Azure Portal: Navigate to Microsoft Entra ID > Properties > Manage Security defaults",
+          "remediation": "Enable Security Defaults in Microsoft Entra ID Properties",
+          "impact": "Users and admins will be required to register for and use MFA",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["M365-001", "IAM-003"]
+        },
+        {
+          "id": "1.1.1",
+          "name": "Ensure Multi-factor Authentication is Required for All Users",
+          "description": "Enable multi-factor authentication for all users in the Microsoft Entra ID.",
+          "rationale": "Multi-factor authentication requires an individual to present a minimum of two separate forms of authentication before access is granted.",
+          "audit": "Review Conditional Access policies or Security Defaults status",
+          "remediation": "Enable Security Defaults or create Conditional Access policy requiring MFA",
+          "impact": "All users will need to configure and use MFA",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-003", "M365-002"]
+        },
+        {
+          "id": "1.1.2",
+          "name": "Ensure Multi-factor Authentication is Required for Administrative Roles",
+          "description": "Ensure that all users with administrative roles are required to use multi-factor authentication.",
+          "rationale": "Administrative accounts are high-value targets for attackers.",
+          "audit": "Review Conditional Access policies targeting administrative roles",
+          "remediation": "Create Conditional Access policy requiring MFA for admin roles",
+          "impact": "Administrators will need to use MFA for all sign-ins",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-003", "PIM-001"]
+        },
+        {
+          "id": "1.2",
+          "name": "Ensure Trusted Locations Are Defined",
+          "description": "Microsoft Entra ID Conditional Access allows an organization to configure Named locations.",
+          "rationale": "Defining trusted locations helps in identifying legitimate user access patterns.",
+          "audit": "Navigate to Microsoft Entra ID > Security > Conditional Access > Named locations",
+          "remediation": "Define named locations for trusted networks",
+          "impact": "None",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-004"]
+        },
+        {
+          "id": "1.3",
+          "name": "Ensure Guest Users Are Reviewed on a Regular Basis",
+          "description": "Microsoft Entra ID allows you to invite external users into your tenant.",
+          "rationale": "Guest users should be reviewed regularly to ensure external access is still appropriate.",
+          "audit": "Review guest user list in Microsoft Entra ID > Users > Guest users",
+          "remediation": "Establish a regular review process for guest users",
+          "impact": "Administrative overhead for reviews",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-005", "M365-003"]
+        },
+        {
+          "id": "1.4",
+          "name": "Ensure Access Reviews Are Configured for Guest Users",
+          "description": "Configure access reviews to periodically review guest user access.",
+          "rationale": "Automated access reviews help ensure guest access is continuously validated.",
+          "audit": "Navigate to Identity Governance > Access reviews",
+          "remediation": "Create recurring access reviews for guest users",
+          "impact": "Requires Azure AD Premium P2 license",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["PIM-003", "IAM-005"]
+        },
+        {
+          "id": "1.5",
+          "name": "Ensure Self-Service Password Reset Is Enabled",
+          "description": "Allow users to reset their own passwords without administrator intervention.",
+          "rationale": "Reduces helpdesk burden and allows for faster recovery from compromised passwords.",
+          "audit": "Navigate to Microsoft Entra ID > Password reset",
+          "remediation": "Enable self-service password reset for all or selected users",
+          "impact": "Users can reset their own passwords",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-003"]
+        },
+        {
+          "id": "1.6",
+          "name": "Ensure Custom Banned Password List is Set",
+          "description": "Configure a custom banned password list to prevent weak passwords.",
+          "rationale": "Custom banned passwords prevent organization-specific weak passwords.",
+          "audit": "Navigate to Microsoft Entra ID > Security > Authentication methods > Password protection",
+          "remediation": "Add custom banned passwords relevant to your organization",
+          "impact": "Users cannot use listed banned passwords",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-003"]
+        },
+        {
+          "id": "1.7",
+          "name": "Ensure Privileged Identity Management Is Used to Manage Roles",
+          "description": "Use Azure AD Privileged Identity Management (PIM) to manage privileged roles.",
+          "rationale": "PIM provides just-in-time privileged access and reduces standing privileges.",
+          "audit": "Navigate to Microsoft Entra ID > Privileged Identity Management",
+          "remediation": "Enable PIM and configure eligible role assignments",
+          "impact": "Requires Azure AD Premium P2 license",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["PIM-001", "PIM-002", "IAM-001"]
+        },
+        {
+          "id": "1.8",
+          "name": "Ensure Global Administrator Count Is Minimized",
+          "description": "Limit the number of users assigned the Global Administrator role.",
+          "rationale": "Global Administrators have unrestricted access and should be limited.",
+          "audit": "Review users with Global Administrator role",
+          "remediation": "Reduce Global Administrators to 2-4 users maximum",
+          "impact": "May require reassignment of duties",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["IAM-001", "PIM-001"]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Microsoft Defender for Cloud",
+      "controls": [
+        {
+          "id": "2.1",
+          "name": "Ensure Microsoft Defender for Cloud Is Set to On",
+          "description": "Enable Microsoft Defender for Cloud to get a unified view of security across Azure resources.",
+          "rationale": "Defender for Cloud provides security recommendations and threat protection.",
+          "audit": "Navigate to Microsoft Defender for Cloud > Environment settings",
+          "remediation": "Enable Defender for Cloud plans",
+          "impact": "Additional cost for enhanced plans",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DEF-001", "DEF-002"]
+        },
+        {
+          "id": "2.1.1",
+          "name": "Ensure Microsoft Defender for Servers Is Set to On",
+          "description": "Enable Microsoft Defender for Servers for server workload protection.",
+          "rationale": "Provides threat detection and vulnerability assessment for servers.",
+          "audit": "Check Defender for Servers plan status",
+          "remediation": "Enable Defender for Servers plan",
+          "impact": "Cost per server",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["DEF-002", "VM-002"]
+        },
+        {
+          "id": "2.1.2",
+          "name": "Ensure Microsoft Defender for App Service Is Set to On",
+          "description": "Enable Microsoft Defender for App Service.",
+          "rationale": "Provides threat detection for web applications.",
+          "audit": "Check Defender for App Service plan status",
+          "remediation": "Enable Defender for App Service plan",
+          "impact": "Cost per App Service plan",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["DEF-002"]
+        },
+        {
+          "id": "2.1.3",
+          "name": "Ensure Microsoft Defender for SQL Is Set to On",
+          "description": "Enable Microsoft Defender for SQL databases.",
+          "rationale": "Provides threat detection and vulnerability assessment for SQL.",
+          "audit": "Check Defender for SQL plan status",
+          "remediation": "Enable Defender for SQL plan",
+          "impact": "Cost per SQL resource",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["DEF-002", "SQL-002"]
+        },
+        {
+          "id": "2.1.4",
+          "name": "Ensure Microsoft Defender for Storage Is Set to On",
+          "description": "Enable Microsoft Defender for Storage accounts.",
+          "rationale": "Provides threat detection for storage account activities.",
+          "audit": "Check Defender for Storage plan status",
+          "remediation": "Enable Defender for Storage plan",
+          "impact": "Cost per storage account",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["DEF-002"]
+        },
+        {
+          "id": "2.1.5",
+          "name": "Ensure Microsoft Defender for Key Vault Is Set to On",
+          "description": "Enable Microsoft Defender for Key Vault.",
+          "rationale": "Provides threat detection for Key Vault access patterns.",
+          "audit": "Check Defender for Key Vault plan status",
+          "remediation": "Enable Defender for Key Vault plan",
+          "impact": "Cost per Key Vault",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["DEF-002", "DAT-004"]
+        },
+        {
+          "id": "2.2",
+          "name": "Ensure Security Contact Email Is Set",
+          "description": "Configure security contact email for Defender for Cloud alerts.",
+          "rationale": "Ensures security alerts are sent to appropriate personnel.",
+          "audit": "Navigate to Defender for Cloud > Environment settings > Email notifications",
+          "remediation": "Configure security contact email addresses",
+          "impact": "None",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "2.3",
+          "name": "Ensure Automatic Provisioning of Monitoring Agent Is Set to On",
+          "description": "Enable automatic provisioning of the monitoring agent.",
+          "rationale": "Ensures consistent monitoring across all VMs.",
+          "audit": "Check auto-provisioning settings in Defender for Cloud",
+          "remediation": "Enable auto-provisioning for monitoring agents",
+          "impact": "Agent deployment on VMs",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DEF-002", "LOG-005"]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Storage Accounts",
+      "controls": [
+        {
+          "id": "3.1",
+          "name": "Ensure Secure Transfer Required Is Set to Enabled",
+          "description": "Enable secure transfer for storage accounts.",
+          "rationale": "Ensures data is encrypted in transit using HTTPS.",
+          "audit": "Check 'Secure transfer required' setting on storage accounts",
+          "remediation": "Enable secure transfer required for all storage accounts",
+          "impact": "HTTP connections will be rejected",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-003"]
+        },
+        {
+          "id": "3.2",
+          "name": "Ensure Storage Account Default Network Access Is Set to Deny",
+          "description": "Configure storage account network access to deny by default.",
+          "rationale": "Restricts storage account access to specific networks.",
+          "audit": "Check storage account firewall settings",
+          "remediation": "Set default network access to Deny and configure allowed networks",
+          "impact": "May break existing connections",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-002", "NET-005"]
+        },
+        {
+          "id": "3.3",
+          "name": "Ensure Private Endpoints Are Used to Access Storage Accounts",
+          "description": "Use private endpoints for storage account access.",
+          "rationale": "Private endpoints provide network isolation for storage access.",
+          "audit": "Check for private endpoint connections on storage accounts",
+          "remediation": "Configure private endpoints for storage accounts",
+          "impact": "Requires VNet integration",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-005"]
+        },
+        {
+          "id": "3.4",
+          "name": "Ensure Storage Logging Is Enabled for Blob Service",
+          "description": "Enable diagnostic logging for blob service.",
+          "rationale": "Provides audit trail for blob access.",
+          "audit": "Check diagnostic settings for blob service",
+          "remediation": "Enable diagnostic logging to Log Analytics or storage",
+          "impact": "Storage cost for logs",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "3.5",
+          "name": "Ensure Public Access Level Is Disabled for Storage Accounts",
+          "description": "Disable blob public access on storage accounts.",
+          "rationale": "Prevents anonymous access to blob data.",
+          "audit": "Check 'Allow Blob public access' setting",
+          "remediation": "Disable blob public access on storage accounts",
+          "impact": "Anonymous blob access will be blocked",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-002"]
+        },
+        {
+          "id": "3.6",
+          "name": "Ensure Minimum TLS Version Is Set to 1.2",
+          "description": "Set minimum TLS version to 1.2 for storage accounts.",
+          "rationale": "TLS 1.0 and 1.1 have known vulnerabilities.",
+          "audit": "Check minimum TLS version setting",
+          "remediation": "Set minimum TLS version to 1.2",
+          "impact": "Old clients may not connect",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-003"]
+        },
+        {
+          "id": "3.7",
+          "name": "Ensure Soft Delete Is Enabled for Blobs and Containers",
+          "description": "Enable soft delete for data recovery.",
+          "rationale": "Allows recovery of accidentally deleted data.",
+          "audit": "Check blob and container soft delete settings",
+          "remediation": "Enable soft delete with appropriate retention period",
+          "impact": "Additional storage for deleted items",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["BAK-001"]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Database Services",
+      "controls": [
+        {
+          "id": "4.1",
+          "name": "Ensure Auditing Is Set to On for SQL Servers",
+          "description": "Enable auditing for Azure SQL Database servers.",
+          "rationale": "Auditing tracks database events and writes them to an audit log.",
+          "audit": "Check SQL Server auditing settings",
+          "remediation": "Enable SQL Server auditing to storage or Log Analytics",
+          "impact": "Storage cost for audit logs",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["SQL-001"]
+        },
+        {
+          "id": "4.2",
+          "name": "Ensure Advanced Threat Protection Is Set to On",
+          "description": "Enable Advanced Threat Protection for SQL databases.",
+          "rationale": "Provides threat detection for SQL databases.",
+          "audit": "Check Advanced Threat Protection status",
+          "remediation": "Enable Advanced Threat Protection",
+          "impact": "Cost per database",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["SQL-002"]
+        },
+        {
+          "id": "4.3",
+          "name": "Ensure SQL Server TDE Is Enabled",
+          "description": "Enable Transparent Data Encryption for SQL databases.",
+          "rationale": "TDE encrypts data at rest.",
+          "audit": "Check TDE status on databases",
+          "remediation": "Enable TDE on all databases",
+          "impact": "Slight performance overhead",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-005"]
+        },
+        {
+          "id": "4.4",
+          "name": "Ensure SQL Server Firewall Rules Are Configured",
+          "description": "Configure SQL Server firewall to restrict access.",
+          "rationale": "Limits network access to SQL servers.",
+          "audit": "Review SQL Server firewall rules",
+          "remediation": "Remove overly permissive firewall rules",
+          "impact": "May break existing connections",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["SQL-003"]
+        },
+        {
+          "id": "4.5",
+          "name": "Ensure SQL Server Uses Private Endpoints",
+          "description": "Use private endpoints for SQL Server access.",
+          "rationale": "Provides network isolation for SQL access.",
+          "audit": "Check for private endpoint connections",
+          "remediation": "Configure private endpoints for SQL servers",
+          "impact": "Requires VNet integration",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-005"]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Logging and Monitoring",
+      "controls": [
+        {
+          "id": "5.1",
+          "name": "Ensure Diagnostic Logs Are Enabled for All Services",
+          "description": "Enable diagnostic logging for Azure services.",
+          "rationale": "Diagnostic logs provide visibility into service operations.",
+          "audit": "Check diagnostic settings on resources",
+          "remediation": "Enable diagnostic settings for all applicable resources",
+          "impact": "Storage cost for logs",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "5.2",
+          "name": "Ensure Activity Log Retention Is Set to 365 Days or More",
+          "description": "Configure Activity Log retention for at least 365 days.",
+          "rationale": "Provides audit trail for compliance requirements.",
+          "audit": "Check Activity Log retention settings",
+          "remediation": "Configure Activity Log to export to storage or Log Analytics",
+          "impact": "Storage cost for logs",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["LOG-001"]
+        },
+        {
+          "id": "5.3",
+          "name": "Ensure Log Analytics Workspace Is Configured",
+          "description": "Create and configure Log Analytics workspace for centralized logging.",
+          "rationale": "Centralized logging enables better security monitoring.",
+          "audit": "Check for Log Analytics workspace in subscription",
+          "remediation": "Create Log Analytics workspace and configure log collection",
+          "impact": "Cost for data ingestion",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["LOG-004"]
+        },
+        {
+          "id": "5.4",
+          "name": "Ensure Network Security Group Flow Logs Are Enabled",
+          "description": "Enable NSG flow logs for network traffic analysis.",
+          "rationale": "Flow logs provide visibility into network traffic.",
+          "audit": "Check NSG flow log settings",
+          "remediation": "Enable NSG flow logs for all NSGs",
+          "impact": "Storage cost for flow logs",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["LOG-003"]
+        },
+        {
+          "id": "5.5",
+          "name": "Ensure Security Alert Notifications Are Configured",
+          "description": "Configure notifications for security alerts.",
+          "rationale": "Ensures timely response to security incidents.",
+          "audit": "Check alert notification settings",
+          "remediation": "Configure alert notifications to appropriate email addresses",
+          "impact": "None",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DEF-003"]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Networking",
+      "controls": [
+        {
+          "id": "6.1",
+          "name": "Ensure No Network Security Groups Allow Inbound from 0.0.0.0/0 to Port 22",
+          "description": "Block SSH access from the internet.",
+          "rationale": "SSH should not be directly accessible from the internet.",
+          "audit": "Review NSG rules for SSH access",
+          "remediation": "Restrict SSH access to specific IP addresses or use Azure Bastion",
+          "impact": "May require alternative remote access",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["NET-002"]
+        },
+        {
+          "id": "6.2",
+          "name": "Ensure No Network Security Groups Allow Inbound from 0.0.0.0/0 to Port 3389",
+          "description": "Block RDP access from the internet.",
+          "rationale": "RDP should not be directly accessible from the internet.",
+          "audit": "Review NSG rules for RDP access",
+          "remediation": "Restrict RDP access to specific IP addresses or use Azure Bastion",
+          "impact": "May require alternative remote access",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["NET-002"]
+        },
+        {
+          "id": "6.3",
+          "name": "Ensure Network Security Groups Are Associated with Subnets",
+          "description": "Associate NSGs with all subnets.",
+          "rationale": "NSGs provide network-level access control.",
+          "audit": "Check subnet NSG associations",
+          "remediation": "Associate NSGs with all subnets",
+          "impact": "May affect network connectivity",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["NET-003"]
+        },
+        {
+          "id": "6.4",
+          "name": "Ensure DDoS Protection Standard Is Enabled",
+          "description": "Enable DDoS Protection Standard for VNets.",
+          "rationale": "Provides enhanced DDoS protection.",
+          "audit": "Check DDoS protection plan association",
+          "remediation": "Enable DDoS Protection Standard",
+          "impact": "Additional cost",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-004"]
+        },
+        {
+          "id": "6.5",
+          "name": "Ensure Web Application Firewall Is Enabled",
+          "description": "Enable WAF for web applications.",
+          "rationale": "WAF protects against common web exploits.",
+          "audit": "Check WAF configuration on Application Gateway",
+          "remediation": "Enable and configure WAF",
+          "impact": "Additional cost and latency",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["WAF-001", "WAF-002"]
+        },
+        {
+          "id": "6.6",
+          "name": "Ensure Azure Bastion Is Used for Remote Access",
+          "description": "Use Azure Bastion for secure remote access.",
+          "rationale": "Bastion provides secure RDP/SSH without public IPs.",
+          "audit": "Check for Azure Bastion deployment",
+          "remediation": "Deploy Azure Bastion for remote access",
+          "impact": "Cost for Bastion service",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-001", "VM-003"]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Virtual Machines",
+      "controls": [
+        {
+          "id": "7.1",
+          "name": "Ensure Virtual Machines Use Managed Disks",
+          "description": "Use managed disks for virtual machines.",
+          "rationale": "Managed disks provide better reliability and security.",
+          "audit": "Check VM disk configuration",
+          "remediation": "Convert unmanaged disks to managed disks",
+          "impact": "Downtime for conversion",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["VM-001"]
+        },
+        {
+          "id": "7.2",
+          "name": "Ensure VM Disk Encryption Is Enabled",
+          "description": "Enable disk encryption for virtual machines.",
+          "rationale": "Disk encryption protects data at rest.",
+          "audit": "Check Azure Disk Encryption status",
+          "remediation": "Enable Azure Disk Encryption on all VMs",
+          "impact": "Slight performance overhead",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["VM-001"]
+        },
+        {
+          "id": "7.3",
+          "name": "Ensure VMs Do Not Have Public IP Addresses",
+          "description": "Avoid assigning public IP addresses directly to VMs.",
+          "rationale": "Reduces attack surface.",
+          "audit": "Check for public IP assignments on VMs",
+          "remediation": "Remove public IPs and use load balancers or Bastion",
+          "impact": "May require architecture changes",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-001", "VM-003"]
+        },
+        {
+          "id": "7.4",
+          "name": "Ensure Automatic OS Updates Are Enabled",
+          "description": "Enable automatic OS updates for virtual machines.",
+          "rationale": "Keeps VMs patched against vulnerabilities.",
+          "audit": "Check update management configuration",
+          "remediation": "Enable automatic updates or Azure Update Management",
+          "impact": "Potential reboots",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["VM-002"]
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Key Vault",
+      "controls": [
+        {
+          "id": "8.1",
+          "name": "Ensure Key Vault Is Recoverable",
+          "description": "Enable soft delete and purge protection on Key Vaults.",
+          "rationale": "Protects against accidental or malicious deletion.",
+          "audit": "Check soft delete and purge protection settings",
+          "remediation": "Enable soft delete and purge protection",
+          "impact": "Cannot immediately purge deleted items",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-004"]
+        },
+        {
+          "id": "8.2",
+          "name": "Ensure Private Endpoints Are Used for Key Vault",
+          "description": "Use private endpoints for Key Vault access.",
+          "rationale": "Provides network isolation for Key Vault access.",
+          "audit": "Check for private endpoint connections",
+          "remediation": "Configure private endpoints for Key Vaults",
+          "impact": "Requires VNet integration",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["NET-005"]
+        },
+        {
+          "id": "8.3",
+          "name": "Ensure Key Vault Logging Is Enabled",
+          "description": "Enable diagnostic logging for Key Vault.",
+          "rationale": "Provides audit trail for Key Vault operations.",
+          "audit": "Check diagnostic settings on Key Vaults",
+          "remediation": "Enable diagnostic logging to Log Analytics",
+          "impact": "Cost for log storage",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "8.4",
+          "name": "Ensure Key Expiration Is Set for Keys",
+          "description": "Set expiration dates on cryptographic keys.",
+          "rationale": "Ensures regular key rotation.",
+          "audit": "Check key expiration settings",
+          "remediation": "Set expiration dates on all keys",
+          "impact": "Requires key rotation process",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-004"]
+        },
+        {
+          "id": "8.5",
+          "name": "Ensure Secret Expiration Is Set for Secrets",
+          "description": "Set expiration dates on secrets.",
+          "rationale": "Ensures regular secret rotation.",
+          "audit": "Check secret expiration settings",
+          "remediation": "Set expiration dates on all secrets",
+          "impact": "Requires secret rotation process",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["DAT-004"]
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "App Service",
+      "controls": [
+        {
+          "id": "9.1",
+          "name": "Ensure App Service Uses Latest TLS Version",
+          "description": "Configure App Service to use TLS 1.2 or higher.",
+          "rationale": "Older TLS versions have known vulnerabilities.",
+          "audit": "Check minimum TLS version setting",
+          "remediation": "Set minimum TLS version to 1.2",
+          "impact": "Old clients may not connect",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["APP-002"]
+        },
+        {
+          "id": "9.2",
+          "name": "Ensure App Service Requires HTTPS Only",
+          "description": "Configure App Service to accept only HTTPS connections.",
+          "rationale": "Ensures all traffic is encrypted.",
+          "audit": "Check HTTPS Only setting",
+          "remediation": "Enable HTTPS Only",
+          "impact": "HTTP connections will be redirected",
+          "profile_applicability": "Level 1",
+          "mapped_controls": ["APP-001"]
+        },
+        {
+          "id": "9.3",
+          "name": "Ensure App Service Uses Managed Identity",
+          "description": "Use managed identities for App Service authentication.",
+          "rationale": "Eliminates need for stored credentials.",
+          "audit": "Check managed identity configuration",
+          "remediation": "Enable system or user-assigned managed identity",
+          "impact": "May require application changes",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["APP-003"]
+        },
+        {
+          "id": "9.4",
+          "name": "Ensure App Service Uses VNet Integration",
+          "description": "Integrate App Service with VNet for private communication.",
+          "rationale": "Provides network isolation for backend connections.",
+          "audit": "Check VNet integration settings",
+          "remediation": "Configure VNet integration",
+          "impact": "Requires VNet and subnet",
+          "profile_applicability": "Level 2",
+          "mapped_controls": ["APP-004"]
+        }
+      ]
+    }
+  ],
+  "total_controls": 55,
+  "level_1_controls": 38,
+  "level_2_controls": 17
+}

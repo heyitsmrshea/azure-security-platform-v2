@@ -5,8 +5,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from ...models.schemas import Tenant, TenantCreate
-from ...services.tenant_manager import TenantManager
+from models.schemas import Tenant, TenantCreate
+from services.tenant_manager import TenantManager
 
 router = APIRouter()
 

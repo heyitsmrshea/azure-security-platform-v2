@@ -1,0 +1,18 @@
+{
+  "overall_grade": "D",
+  "overall_score": 45.0,
+  "secure_score": 50,
+  "categories": {
+    "identity": 50.0,
+    "data_protection": 60,
+    "backup": 0,
+    "devices": 50,
+    "network": 70
+  },
+  "compliance": {
+    "cis": 93.1,
+    "nist": 91.7,
+    "soc2": 92.8,
+    "iso27001": 93.9
+  }
+}

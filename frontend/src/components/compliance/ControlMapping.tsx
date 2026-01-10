@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 import { cn } from '@/lib/utils'
 import { CheckCircle2, XCircle, AlertCircle, MinusCircle } from 'lucide-react'
 
@@ -25,7 +27,28 @@ const frameworks = [
     { key: 'nist', name: 'NIST' },
 ]
 
-export function ControlMapping() {
+export function ControlMapping({ tenantId }: { tenantId: string }) {
+    const [mappings, setMappings] = useState<any[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { apiClient } = await import('@/lib/api-client')
+                const data = await apiClient.getControlMapping(tenantId) as any
+                setMappings(data.mappings || [])
+            } catch (error) {
+                console.error('Failed to fetch control mappings', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        fetchData()
+    }, [tenantId])
+
+    if (isLoading) {
+        return <div className="p-8 text-center text-foreground-muted">Loading mappings...</div>
+    }
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'pass': return <CheckCircle2 className="w-4 h-4 text-status-success" />
@@ -49,7 +72,7 @@ export function ControlMapping() {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="section-title">Control-to-Framework Mapping</h2>
                 <span className="text-sm text-foreground-muted">
-                    {controlMappings.length} controls mapped
+                    {mappings.length} controls mapped
                 </span>
             </div>
 
@@ -71,7 +94,7 @@ export function ControlMapping() {
                         </tr>
                     </thead>
                     <tbody>
-                        {controlMappings.map((control, idx) => (
+                        {mappings.map((control, idx) => (
                             <tr
                                 key={control.id}
                                 className={cn(
@@ -89,7 +112,8 @@ export function ControlMapping() {
                                     {getStatusIcon(control.status)}
                                 </td>
                                 {frameworks.map((fw) => {
-                                    const ref = control[fw.key as keyof typeof control]
+                                    const refKey = `${fw.key}_ref`
+                                    const ref = control[refKey] || control[fw.key] // Handle both API format and potential fallback
                                     return (
                                         <td key={fw.key} className="text-center py-3 px-3">
                                             {ref ? (

@@ -18,6 +18,9 @@ interface MetricCardProps {
   status?: 'healthy' | 'warning' | 'critical' | 'neutral'
   className?: string
   size?: 'default' | 'large'
+  isNotConfigured?: boolean
+  actionLink?: string
+  actionLabel?: string
 }
 
 export function MetricCard({
@@ -29,6 +32,9 @@ export function MetricCard({
   status = 'neutral',
   className,
   size = 'default',
+  isNotConfigured = false,
+  actionLink,
+  actionLabel = 'View details',
 }: MetricCardProps) {
   const statusColors = {
     healthy: 'border-l-status-success',
@@ -37,21 +43,16 @@ export function MetricCard({
     neutral: 'border-l-transparent',
   }
 
-  const TrendIcon = trend?.direction === 'up' 
-    ? TrendingUp 
-    : trend?.direction === 'down' 
-    ? TrendingDown 
-    : Minus
+  const effectiveStatus = isNotConfigured ? 'neutral' : status
 
-  return (
-    <div
-      className={cn(
-        'card border-l-4 transition-all duration-200',
-        statusColors[status],
-        'hover:shadow-card-hover',
-        className
-      )}
-    >
+  const TrendIcon = trend?.direction === 'up'
+    ? TrendingUp
+    : trend?.direction === 'down'
+      ? TrendingDown
+      : Minus
+
+  const content = (
+    <>
       <div className="flex items-start justify-between mb-3">
         <span className="kpi-label">{label}</span>
         {icon && (
@@ -64,27 +65,34 @@ export function MetricCard({
       <div className="flex items-end justify-between">
         <div>
           <div className={cn(
-            'font-bold text-foreground-primary tracking-tight',
-            size === 'large' ? 'text-5xl' : 'text-4xl'
+            'font-bold tracking-tight',
+            size === 'large' ? 'text-5xl' : 'text-4xl',
+            isNotConfigured ? 'text-foreground-muted text-2xl font-normal' : 'text-foreground-primary'
           )}>
-            {typeof value === 'number' ? formatNumber(value) : value}
+            {isNotConfigured ? 'Not Configured' : (typeof value === 'number' ? formatNumber(value) : value)}
           </div>
-          
-          {comparison && (
+
+          {comparison && !isNotConfigured && (
             <div className="mt-1 text-sm text-foreground-muted">
               {comparison}
             </div>
           )}
+
+          {isNotConfigured && actionLink && (
+            <div className="mt-2 text-xs text-accent font-medium flex items-center gap-1 group-hover:underline">
+              {actionLabel} <ArrowUpRight className="w-3 h-3" />
+            </div>
+          )}
         </div>
 
-        {trend && (
+        {!isNotConfigured && trend && (
           <div className={cn(
             'flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium',
-            trend.direction === 'up' 
-              ? 'bg-status-success/10 text-status-success' 
+            trend.direction === 'up'
+              ? 'bg-status-success/10 text-status-success'
               : trend.direction === 'down'
-              ? 'bg-status-error/10 text-status-error'
-              : 'bg-background-tertiary text-foreground-muted'
+                ? 'bg-status-error/10 text-status-error'
+                : 'bg-background-tertiary text-foreground-muted'
           )}>
             <TrendIcon className="w-4 h-4" />
             <span>
@@ -95,6 +103,36 @@ export function MetricCard({
           </div>
         )}
       </div>
+    </>
+  )
+
+  if (actionLink) {
+    return (
+      <a
+        href={actionLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          'card border-l-4 transition-all duration-200 block group hover:shadow-card-hover no-underline',
+          statusColors[effectiveStatus],
+          className
+        )}
+      >
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <div
+      className={cn(
+        'card border-l-4 transition-all duration-200',
+        statusColors[effectiveStatus],
+        'hover:shadow-card-hover',
+        className
+      )}
+    >
+      {content}
     </div>
   )
 }
@@ -120,9 +158,11 @@ export function ScoreCard({
   maxScore = 100,
   trend,
   comparison,
-  status = 'neutral',
+  // status prop available for future use (e.g., border coloring)
+  status: _status = 'neutral',
   className,
 }: ScoreCardProps) {
+  void _status // Suppress unused variable warning
   const percentage = (score / maxScore) * 100
   const circumference = 2 * Math.PI * 40
   const strokeDashoffset = circumference - (percentage / 100) * circumference

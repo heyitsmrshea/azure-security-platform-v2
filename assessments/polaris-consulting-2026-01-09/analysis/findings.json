@@ -1,0 +1,14 @@
+[
+  {
+    "id": "BKP-001-4e855a40",
+    "title": "Azure Backup Not Configured",
+    "description": "No Azure Backup vaults detected - critical for ransomware recovery",
+    "severity": "critical",
+    "category": "backup",
+    "framework_controls": [
+      "NIST CP-9",
+      "SOC2 A1.2"
+    ],
+    "recommendation": "Implement Azure Backup for critical systems"
+  }
+]

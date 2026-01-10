@@ -107,6 +107,8 @@ const mockOffboardedUsers: OffboardedUser[] = [
     },
 ]
 
+export { mockOffboardedUsers }
+
 const checkLabels = {
     account_disabled: { label: 'Account Disabled', icon: Shield },
     mfa_removed: { label: 'MFA Removed', icon: Key },
@@ -116,13 +118,19 @@ const checkLabels = {
     mailbox_converted: { label: 'Mailbox Converted', icon: Mail },
 }
 
-export function OffboardingStatus({ className }: { className?: string }) {
+export interface OffboardingStatusProps {
+    className?: string
+    users?: OffboardedUser[]
+}
+
+export function OffboardingStatus({ className, users = [] }: OffboardingStatusProps) {
     const [expandedUser, setExpandedUser] = useState<string | null>(null)
     const [filter, setFilter] = useState<'all' | 'pending' | 'in_progress' | 'complete'>('all')
 
+    const dataToUse = users
     const filteredUsers = filter === 'all'
-        ? mockOffboardedUsers
-        : mockOffboardedUsers.filter(u => u.status === filter)
+        ? dataToUse
+        : dataToUse.filter(u => u.status === filter)
 
     const getStatusIcon = (status: string) => {
         switch (status) {

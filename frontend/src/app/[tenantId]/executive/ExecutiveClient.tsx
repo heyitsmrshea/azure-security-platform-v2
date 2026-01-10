@@ -3,13 +3,13 @@
 import { DashboardHeader } from '@/components/shared/DashboardHeader'
 import { MetricCard, ScoreCard } from '@/components/shared/MetricCard'
 import { StatusBadge, SeverityBadge } from '@/components/shared/StatusBadge'
+import { useState, useEffect, useCallback } from 'react'
 import { RiskCard } from '@/components/executive/RiskCard'
 import { TrendChart, FindingAgeChart } from '@/components/executive/TrendChart'
 import { HealthGrade } from '@/components/executive/HealthGrade'
 import { ExecutiveDashboard } from '@/types/dashboard'
+import { cn } from '@/lib/utils'
 import {
-    Shield,
-    ShieldCheck,
     AlertTriangle,
     HardDrive,
     Clock,
@@ -21,188 +21,57 @@ import {
     Laptop,
     Timer,
     ListChecks,
-    Gauge
 } from 'lucide-react'
+import { AzureLinks } from '@/lib/azure-links'
 
-// Mock data - in production this would come from the API
-const mockDashboard: ExecutiveDashboard = {
-    tenant_id: 'demo',
-    tenant_name: 'Demo Organization',
-    security_score: {
-        current_score: 72.5,
-        max_score: 100,
-        percentile: 65,
-        trend: { direction: 'up', change_value: 3.2, change_percent: 4.6, period: '7d' },
-        comparison_label: 'Top 35%',
-        last_updated: new Date().toISOString(),
-    },
-    compliance_score: {
-        framework: 'CIS Azure 2.0',
-        score_percent: 68.5,
-        controls_passed: 137,
-        controls_total: 200,
-        trend: { direction: 'up', change_value: 2.1, change_percent: 3.2, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    risk_summary: {
-        critical_count: 3,
-        high_count: 12,
-        medium_count: 45,
-        low_count: 89,
-        trend: { direction: 'down', change_value: 2, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    backup_health: {
-        protected_percent: 94.5,
-        total_protected_items: 47,
-        total_critical_systems: 50,
-        last_successful_backup: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-        hours_since_backup: 4,
-        status: 'healthy',
-        last_updated: new Date().toISOString(),
-    },
-    recovery_readiness: {
-        rto_status: 'healthy',
-        rpo_status: 'healthy',
-        rto_target_hours: 24,
-        rpo_target_hours: 4,
-        rto_actual_hours: 18,
-        rpo_actual_hours: 4,
-        overall_status: 'healthy',
-        last_updated: new Date().toISOString(),
-    },
-    mfa_coverage: {
-        admin_coverage_percent: 100,
-        user_coverage_percent: 87.3,
-        total_admins: 8,
-        admins_with_mfa: 8,
-        total_users: 150,
-        users_with_mfa: 131,
-        trend: { direction: 'up', change_value: 2.5, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    privileged_accounts: {
-        global_admin_count: 3,
-        privileged_role_count: 12,
-        pim_eligible_count: 8,
-        pim_active_count: 2,
-        trend: { direction: 'stable', change_value: 0, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    risky_users: {
-        high_risk_count: 0,
-        medium_risk_count: 2,
-        low_risk_count: 5,
-        requires_investigation: 2,
-        trend: { direction: 'down', change_value: 1, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    alert_summary: {
-        critical_count: 0,
-        high_count: 2,
-        medium_count: 8,
-        low_count: 15,
-        total_active: 25,
-        last_updated: new Date().toISOString(),
-    },
-    blocked_threats: {
-        phishing_blocked: 156,
-        malware_blocked: 23,
-        spam_blocked: 1247,
-        total_blocked: 1426,
-        period: '30d',
-        last_updated: new Date().toISOString(),
-    },
-    device_compliance: {
-        compliant_count: 142,
-        non_compliant_count: 8,
-        unknown_count: 3,
-        total_devices: 153,
-        compliance_percent: 92.8,
-        trend: { direction: 'up', change_value: 1.2, period: '7d' },
-        last_updated: new Date().toISOString(),
-    },
-    patch_sla: {
-        compliance_percent: 89.5,
-        target_percent: 95,
-        patches_in_sla: 179,
-        patches_total: 200,
-        critical_sla_days: 7,
-        high_sla_days: 14,
-        medium_sla_days: 30,
-        last_updated: new Date().toISOString(),
-    },
-    finding_age: {
-        age_0_7: 15,
-        age_7_30: 28,
-        age_30_90: 12,
-        age_90_plus: 5,
-        total_open: 60,
-        last_updated: new Date().toISOString(),
-    },
-    mttr: {
-        mttr_days: 8.5,
-        critical_mttr_days: 2.1,
-        high_mttr_days: 5.3,
-        findings_resolved_count: 45,
-        period: '30d',
-        last_updated: new Date().toISOString(),
-    },
-    score_trend: [
-        { date: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 58.2, compliance_score: 52.1 },
-        { date: new Date(Date.now() - 150 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 61.5, compliance_score: 55.8 },
-        { date: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 64.8, compliance_score: 59.2 },
-        { date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 67.2, compliance_score: 62.5 },
-        { date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 69.5, compliance_score: 65.1 },
-        { date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), secure_score: 71.2, compliance_score: 67.3 },
-        { date: new Date().toISOString(), secure_score: 72.5, compliance_score: 68.5 },
-    ],
-    top_risks: [
-        {
-            title: 'Legacy Authentication Enabled',
-            description: '3 applications still allow legacy authentication protocols that bypass MFA',
-            severity: 'high',
-            affected_resources: 3,
-            recommendation: 'Disable legacy authentication in Conditional Access policies',
-        },
-        {
-            title: 'Unpatched Critical Vulnerabilities',
-            description: '2 servers have critical vulnerabilities older than 7 days',
-            severity: 'critical',
-            affected_resources: 2,
-            recommendation: 'Apply security patches immediately',
-        },
-        {
-            title: 'Excessive Global Admin Count',
-            description: '3 users have permanent Global Admin role (target: 2 or fewer)',
-            severity: 'medium',
-            affected_resources: 3,
-            recommendation: 'Convert to PIM eligible assignments',
-        },
-        {
-            title: 'External Sharing Without Review',
-            description: "45 files shared externally haven't been reviewed in 90+ days",
-            severity: 'medium',
-            affected_resources: 45,
-            recommendation: 'Review and revoke unnecessary external shares',
-        },
-        {
-            title: 'Stale Guest Accounts',
-            description: "12 guest accounts haven't signed in for 90+ days",
-            severity: 'low',
-            affected_resources: 12,
-            recommendation: 'Review and disable inactive guest accounts',
-        },
-    ],
-    data_freshness: {
-        last_updated: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-        minutes_ago: 12,
-        status: 'fresh',
-    },
-}
+
 
 export function ExecutiveClient({ tenantId }: { tenantId: string }) {
-    const data = mockDashboard
+    const [data, setData] = useState<ExecutiveDashboard | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    const fetchData = useCallback(async () => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            // Dynamically import apiClient to ensure it uses the correct env vars on client side
+            const { apiClient } = await import('@/lib/api-client')
+            const dashboardData = await apiClient.getExecutiveDashboard(tenantId)
+            setData(dashboardData)
+        } catch (err) {
+            console.error('Failed to fetch executive dashboard:', err)
+            setError('Failed to load dashboard data. Please try again.')
+        } finally {
+            setIsLoading(false)
+        }
+    }, [tenantId])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background-primary flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+                    <p className="text-foreground-muted">Loading dashboard...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (error || !data) {
+        return (
+            <div className="min-h-screen bg-background-primary flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <p className="text-status-error">{error || 'No data available'}</p>
+                    <button onClick={fetchData} className="btn-primary">Retry</button>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-background-primary">
@@ -211,7 +80,8 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                 tenantId={tenantId}
                 title="Executive Dashboard"
                 minutesAgo={data.data_freshness.minutes_ago}
-                onRefresh={() => console.log('Refresh')}
+                onRefresh={fetchData}
+                isRefreshing={isLoading}
             />
 
             <main className="p-6 space-y-6">
@@ -221,16 +91,16 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                         Security Posture
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {/* Health Grade - Large visual grade */}
+                        {/* Health Grade - Large visual grade based on percentage */}
                         <div className="card flex items-center justify-center py-6">
-                            <HealthGrade score={data.security_score.current_score} />
+                            <HealthGrade score={data.security_score.score_percent} />
                         </div>
                         <ScoreCard
                             label="Security Score"
-                            score={data.security_score.current_score}
-                            maxScore={data.security_score.max_score}
+                            score={data.security_score.score_percent}
+                            maxScore={100}
                             trend={data.security_score.trend}
-                            comparison={data.security_score.comparison_label}
+                            comparison={`${data.security_score.current_score.toFixed(0)}/${data.security_score.max_score.toFixed(0)} pts`}
                         />
                         <ScoreCard
                             label="Compliance Score"
@@ -245,9 +115,146 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                             icon={<AlertTriangle className="w-5 h-5" />}
                             status={data.risk_summary.critical_count > 0 ? 'critical' : data.risk_summary.high_count > 5 ? 'warning' : 'healthy'}
                             comparison={`${data.risk_summary.critical_count} Critical, ${data.risk_summary.high_count} High`}
+                            actionLink={AzureLinks.incidents}
+                            actionLabel="View Incidents"
                         />
                     </div>
                 </section>
+
+                {/* Industry Benchmarks - CEO view */}
+                {data.security_score.benchmarks && (
+                    <section>
+                        <h2 className="text-sm font-medium text-foreground-muted uppercase tracking-wider mb-4">
+                            Industry Benchmarks
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Your Score */}
+                            <div className="card bg-gradient-to-br from-accent/5 to-transparent">
+                                <div className="text-sm text-foreground-muted mb-2">Your Security Score</div>
+                                <div className="text-4xl font-bold text-accent">
+                                    {data.security_score.score_percent.toFixed(1)}%
+                                </div>
+                                <div className="text-xs text-foreground-muted mt-1">
+                                    {data.security_score.current_score.toFixed(0)} / {data.security_score.max_score.toFixed(0)} points
+                                </div>
+                            </div>
+
+                            {/* All Tenants Comparison */}
+                            {data.security_score.benchmarks.all_tenants && (
+                                <div className="card">
+                                    <div className="text-sm text-foreground-muted mb-2">vs All Organizations</div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className={cn(
+                                            'text-2xl font-bold',
+                                            data.security_score.benchmarks.all_tenants.comparison === 'above' 
+                                                ? 'text-status-success' 
+                                                : 'text-status-error'
+                                        )}>
+                                            {data.security_score.benchmarks.all_tenants.difference > 0 ? '+' : ''}
+                                            {data.security_score.benchmarks.all_tenants.difference.toFixed(1)}%
+                                        </span>
+                                        <span className="text-sm text-foreground-muted">
+                                            {data.security_score.benchmarks.all_tenants.comparison === 'above' 
+                                                ? 'above' 
+                                                : 'below'} average
+                                        </span>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-divider">
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-foreground-muted">Global Average</span>
+                                            <span className="text-foreground-secondary">
+                                                {data.security_score.benchmarks.all_tenants.average_percent.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Similar Size Comparison */}
+                            {data.security_score.benchmarks.similar_size && (
+                                <div className="card">
+                                    <div className="text-sm text-foreground-muted mb-2">
+                                        vs Similar Size
+                                        {data.security_score.benchmarks.similar_size.size_category && 
+                                         data.security_score.benchmarks.similar_size.size_category !== 'Unknown' && (
+                                            <span className="ml-1 text-xs">
+                                                ({data.security_score.benchmarks.similar_size.size_category})
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className={cn(
+                                            'text-2xl font-bold',
+                                            data.security_score.benchmarks.similar_size.comparison === 'above' 
+                                                ? 'text-status-success' 
+                                                : 'text-status-error'
+                                        )}>
+                                            {data.security_score.benchmarks.similar_size.difference > 0 ? '+' : ''}
+                                            {data.security_score.benchmarks.similar_size.difference.toFixed(1)}%
+                                        </span>
+                                        <span className="text-sm text-foreground-muted">
+                                            {data.security_score.benchmarks.similar_size.comparison === 'above' 
+                                                ? 'above' 
+                                                : 'below'} peers
+                                        </span>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-divider">
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-foreground-muted">Peer Average</span>
+                                            <span className="text-foreground-secondary">
+                                                {data.security_score.benchmarks.similar_size.average_percent.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Industry Comparison (if available) */}
+                            {data.security_score.benchmarks.industry && (
+                                <div className="card">
+                                    <div className="text-sm text-foreground-muted mb-2">vs Industry</div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className={cn(
+                                            'text-2xl font-bold',
+                                            data.security_score.benchmarks.industry.comparison === 'above' 
+                                                ? 'text-status-success' 
+                                                : 'text-status-error'
+                                        )}>
+                                            {data.security_score.benchmarks.industry.difference > 0 ? '+' : ''}
+                                            {data.security_score.benchmarks.industry.difference.toFixed(1)}%
+                                        </span>
+                                        <span className="text-sm text-foreground-muted">
+                                            {data.security_score.benchmarks.industry.comparison === 'above' 
+                                                ? 'above' 
+                                                : 'below'} industry
+                                        </span>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-divider">
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-foreground-muted">Industry Average</span>
+                                            <span className="text-foreground-secondary">
+                                                {data.security_score.benchmarks.industry.average_percent.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* No industry data message */}
+                            {!data.security_score.benchmarks.industry && (
+                                <div className="card bg-background-secondary/50">
+                                    <div className="text-sm text-foreground-muted mb-2">vs Industry</div>
+                                    <div className="text-foreground-muted text-sm">
+                                        Industry benchmark not available
+                                    </div>
+                                    <div className="text-xs text-foreground-muted mt-2">
+                                        Set your industry in Microsoft 365 Admin Center to enable
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
 
                 {/* Row 2: Ransomware Readiness */}
                 <section>
@@ -261,12 +268,17 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                             icon={<HardDrive className="w-5 h-5" />}
                             status={data.backup_health.status === 'healthy' ? 'healthy' : data.backup_health.status === 'warning' ? 'warning' : 'critical'}
                             comparison={`${data.backup_health.total_protected_items}/${data.backup_health.total_critical_systems} systems protected`}
+                            isNotConfigured={data.backup_health.total_protected_items === 0}
+                            actionLink={AzureLinks.backup}
+                            actionLabel="Configure Backup"
                         />
                         <MetricCard
                             label="Last Successful Backup"
-                            value={`${data.backup_health.hours_since_backup}h ago`}
+                            value={data.backup_health.hours_since_backup != null ? `${data.backup_health.hours_since_backup}h ago` : 'N/A'}
                             icon={<Clock className="w-5 h-5" />}
-                            status={data.backup_health.hours_since_backup && data.backup_health.hours_since_backup <= 24 ? 'healthy' : 'warning'}
+                            status={data.backup_health.hours_since_backup != null && data.backup_health.hours_since_backup <= 24 ? 'healthy' : 'warning'}
+                            isNotConfigured={data.backup_health.total_protected_items === 0}
+                            actionLink={AzureLinks.backup}
                         />
                         <div className="card">
                             <div className="kpi-label mb-3">Recovery Readiness</div>
@@ -339,6 +351,8 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                             icon={<UserCog className="w-5 h-5" />}
                             status={data.privileged_accounts.global_admin_count > 3 ? 'warning' : 'healthy'}
                             comparison={`${data.privileged_accounts.pim_eligible_count} PIM eligible`}
+                            actionLink={AzureLinks.users}
+                            actionLabel="Manage Users"
                         />
                         <MetricCard
                             label="Risky Users"
@@ -347,6 +361,8 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                             trend={data.risky_users.trend}
                             status={data.risky_users.high_risk_count > 0 ? 'critical' : data.risky_users.requires_investigation > 0 ? 'warning' : 'healthy'}
                             comparison="Require investigation"
+                            actionLink={AzureLinks.riskyUsers}
+                            actionLabel="Investigate"
                         />
                     </div>
                 </section>
@@ -379,18 +395,55 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
                         </div>
                         <MetricCard
                             label="Threats Blocked (30d)"
-                            value={data.blocked_threats.total_blocked}
+                            value={
+                                // Show "N/A" if Defender data is not available (all zeros)
+                                data.blocked_threats.total_blocked === 0 && 
+                                data.blocked_threats.phishing_blocked === 0 && 
+                                data.blocked_threats.malware_blocked === 0
+                                    ? 'N/A'
+                                    : data.blocked_threats.total_blocked
+                            }
                             icon={<ShieldOff className="w-5 h-5" />}
-                            status="healthy"
-                            comparison={`${data.blocked_threats.phishing_blocked} phishing, ${data.blocked_threats.malware_blocked} malware`}
+                            status={data.blocked_threats.total_blocked > 0 ? 'healthy' : 'neutral'}
+                            isNotConfigured={
+                                data.blocked_threats.total_blocked === 0 && 
+                                data.blocked_threats.phishing_blocked === 0 && 
+                                data.blocked_threats.malware_blocked === 0
+                            }
+                            comparison={
+                                data.blocked_threats.total_blocked > 0
+                                    ? `${data.blocked_threats.phishing_blocked} phishing, ${data.blocked_threats.malware_blocked} malware`
+                                    : 'Defender for O365 not configured'
+                            }
+                            actionLink={AzureLinks.securityCenter}
+                            actionLabel={data.blocked_threats.total_blocked > 0 ? 'Defender' : 'Configure Defender'}
                         />
                         <MetricCard
                             label="Device Compliance"
-                            value={`${data.device_compliance.compliance_percent}%`}
+                            value={
+                                // Show "Unknown" if all devices are in unknown state
+                                data.device_compliance.unknown_count === data.device_compliance.total_devices && data.device_compliance.total_devices > 0
+                                    ? 'Unknown'
+                                    : `${data.device_compliance.compliance_percent}%`
+                            }
                             icon={<Laptop className="w-5 h-5" />}
                             trend={data.device_compliance.trend}
-                            status={data.device_compliance.compliance_percent >= 90 ? 'healthy' : 'warning'}
-                            comparison={`${data.device_compliance.non_compliant_count} non-compliant`}
+                            status={
+                                // All devices unknown = neutral, otherwise use compliance percentage
+                                data.device_compliance.unknown_count === data.device_compliance.total_devices
+                                    ? 'neutral'
+                                    : data.device_compliance.compliance_percent >= 90 ? 'healthy' : 'warning'
+                            }
+                            comparison={
+                                // Show appropriate comparison based on state
+                                data.device_compliance.unknown_count === data.device_compliance.total_devices
+                                    ? `${data.device_compliance.total_devices} devices pending evaluation`
+                                    : data.device_compliance.non_compliant_count > 0
+                                        ? `${data.device_compliance.non_compliant_count} non-compliant`
+                                        : `${data.device_compliance.total_devices} devices compliant`
+                            }
+                            actionLink={AzureLinks.devices}
+                            actionLabel="Manage Devices"
                         />
                     </div>
                 </section>
@@ -441,3 +494,4 @@ export function ExecutiveClient({ tenantId }: { tenantId: string }) {
         </div>
     )
 }
+

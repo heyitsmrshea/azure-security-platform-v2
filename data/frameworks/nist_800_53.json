@@ -1,0 +1,563 @@
+{
+  "framework": {
+    "id": "NIST_800_53_R5",
+    "name": "NIST Special Publication 800-53 Revision 5",
+    "version": "5.0",
+    "release_date": "2020-09-23",
+    "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+  },
+  "control_families": [
+    {
+      "id": "AC",
+      "name": "Access Control",
+      "description": "Access control policy and procedures",
+      "controls": [
+        {
+          "id": "AC-1",
+          "name": "Policy and Procedures",
+          "description": "Develop, document, and disseminate access control policy and procedures.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "AC-2",
+          "name": "Account Management",
+          "description": "Manage system accounts, including establishing, activating, modifying, reviewing, disabling, and removing accounts.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-001", "IAM-002", "IAM-005", "PIM-002"]
+        },
+        {
+          "id": "AC-2(1)",
+          "name": "Account Management | Automated System Account Management",
+          "description": "Support account management through automated mechanisms.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["PIM-001", "PIM-003"]
+        },
+        {
+          "id": "AC-2(3)",
+          "name": "Account Management | Disable Accounts",
+          "description": "Disable accounts when no longer required or after inactivity period.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-005"]
+        },
+        {
+          "id": "AC-2(4)",
+          "name": "Account Management | Automated Audit Actions",
+          "description": "Automatically audit account creation, modification, enabling, disabling, and removal.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "LOG-002"]
+        },
+        {
+          "id": "AC-3",
+          "name": "Access Enforcement",
+          "description": "Enforce approved authorizations for logical access to information and system resources.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-001", "NET-002", "NET-003"]
+        },
+        {
+          "id": "AC-4",
+          "name": "Information Flow Enforcement",
+          "description": "Enforce approved authorizations for controlling the flow of information.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["NET-002", "NET-003", "NET-005"]
+        },
+        {
+          "id": "AC-5",
+          "name": "Separation of Duties",
+          "description": "Separate duties of individuals to reduce risk of malevolent activity.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-001", "PIM-001"]
+        },
+        {
+          "id": "AC-6",
+          "name": "Least Privilege",
+          "description": "Employ the principle of least privilege.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-001", "PIM-001", "PIM-002"]
+        },
+        {
+          "id": "AC-6(1)",
+          "name": "Least Privilege | Authorize Access to Security Functions",
+          "description": "Authorize access for users and processes to privileged functions.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["PIM-001", "PIM-004"]
+        },
+        {
+          "id": "AC-6(5)",
+          "name": "Least Privilege | Privileged Accounts",
+          "description": "Restrict privileged accounts to specific personnel or roles.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-001", "PIM-001"]
+        },
+        {
+          "id": "AC-6(9)",
+          "name": "Least Privilege | Log Use of Privileged Functions",
+          "description": "Log the execution of privileged functions.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "LOG-002"]
+        },
+        {
+          "id": "AC-7",
+          "name": "Unsuccessful Logon Attempts",
+          "description": "Enforce a limit of consecutive invalid logon attempts.",
+          "priority": "P2",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-003", "M365-001"]
+        },
+        {
+          "id": "AC-17",
+          "name": "Remote Access",
+          "description": "Establish and document usage restrictions for remote access.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["VPN-001", "VPN-002", "NET-001"]
+        },
+        {
+          "id": "AC-17(1)",
+          "name": "Remote Access | Monitoring and Control",
+          "description": "Monitor and control remote access methods.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "VPN-001"]
+        },
+        {
+          "id": "AC-17(2)",
+          "name": "Remote Access | Protection of Confidentiality and Integrity",
+          "description": "Implement cryptographic mechanisms to protect confidentiality and integrity of remote access sessions.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["VPN-001", "VPN-002", "APP-001"]
+        }
+      ]
+    },
+    {
+      "id": "AU",
+      "name": "Audit and Accountability",
+      "description": "Audit and accountability policy and procedures",
+      "controls": [
+        {
+          "id": "AU-1",
+          "name": "Policy and Procedures",
+          "description": "Develop, document, and disseminate audit and accountability policy.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "AU-2",
+          "name": "Event Logging",
+          "description": "Identify types of events that the system is capable of logging.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "LOG-002", "SQL-001"]
+        },
+        {
+          "id": "AU-3",
+          "name": "Content of Audit Records",
+          "description": "Ensure audit records contain required information.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "AU-4",
+          "name": "Audit Log Storage Capacity",
+          "description": "Allocate audit log storage capacity.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "LOG-004"]
+        },
+        {
+          "id": "AU-6",
+          "name": "Audit Record Review, Analysis, and Reporting",
+          "description": "Review and analyze system audit records.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-004", "DEF-001"]
+        },
+        {
+          "id": "AU-6(1)",
+          "name": "Audit Record Review | Automated Process Integration",
+          "description": "Integrate audit review, analysis, and reporting with automated processes.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-004", "DEF-001"]
+        },
+        {
+          "id": "AU-9",
+          "name": "Protection of Audit Information",
+          "description": "Protect audit information and audit logging tools from unauthorized access.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001", "DAT-001"]
+        },
+        {
+          "id": "AU-11",
+          "name": "Audit Record Retention",
+          "description": "Retain audit records for the defined retention period.",
+          "priority": "P3",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-001"]
+        },
+        {
+          "id": "AU-12",
+          "name": "Audit Record Generation",
+          "description": "Provide audit record generation capability.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["LOG-002", "SQL-001"]
+        }
+      ]
+    },
+    {
+      "id": "CA",
+      "name": "Assessment, Authorization, and Monitoring",
+      "description": "Security assessment and authorization",
+      "controls": [
+        {
+          "id": "CA-2",
+          "name": "Control Assessments",
+          "description": "Develop security assessment plan and assess security controls.",
+          "priority": "P2",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-004"]
+        },
+        {
+          "id": "CA-7",
+          "name": "Continuous Monitoring",
+          "description": "Develop and implement a continuous monitoring strategy.",
+          "priority": "P2",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-001", "DEF-002", "LOG-004"]
+        },
+        {
+          "id": "CA-8",
+          "name": "Penetration Testing",
+          "description": "Conduct penetration testing.",
+          "priority": "P2",
+          "baseline": ["HIGH"],
+          "mapped_controls": ["DEF-005"]
+        }
+      ]
+    },
+    {
+      "id": "CM",
+      "name": "Configuration Management",
+      "description": "Configuration management policy and procedures",
+      "controls": [
+        {
+          "id": "CM-1",
+          "name": "Policy and Procedures",
+          "description": "Develop, document, and disseminate configuration management policy.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "CM-2",
+          "name": "Baseline Configuration",
+          "description": "Develop, document, and maintain baseline configuration.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001", "GOV-005"]
+        },
+        {
+          "id": "CM-6",
+          "name": "Configuration Settings",
+          "description": "Establish and document mandatory configuration settings.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "CM-7",
+          "name": "Least Functionality",
+          "description": "Configure the system to provide only essential capabilities.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["NET-002", "NET-003"]
+        },
+        {
+          "id": "CM-8",
+          "name": "System Component Inventory",
+          "description": "Develop and document an inventory of system components.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-003"]
+        }
+      ]
+    },
+    {
+      "id": "CP",
+      "name": "Contingency Planning",
+      "description": "Contingency planning policy and procedures",
+      "controls": [
+        {
+          "id": "CP-9",
+          "name": "System Backup",
+          "description": "Conduct backups of user-level and system-level information.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["BAK-001", "BAK-002", "BAK-003"]
+        },
+        {
+          "id": "CP-10",
+          "name": "System Recovery and Reconstitution",
+          "description": "Provide for the recovery and reconstitution of the system.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["BAK-001"]
+        }
+      ]
+    },
+    {
+      "id": "IA",
+      "name": "Identification and Authentication",
+      "description": "Identification and authentication policy and procedures",
+      "controls": [
+        {
+          "id": "IA-1",
+          "name": "Policy and Procedures",
+          "description": "Develop, document, and disseminate identification and authentication policy.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "IA-2",
+          "name": "Identification and Authentication (Organizational Users)",
+          "description": "Uniquely identify and authenticate organizational users.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-003", "M365-001"]
+        },
+        {
+          "id": "IA-2(1)",
+          "name": "Identification and Authentication | Multi-Factor Authentication to Privileged Accounts",
+          "description": "Implement multi-factor authentication for access to privileged accounts.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-003", "M365-001", "M365-002", "PIM-001"]
+        },
+        {
+          "id": "IA-2(2)",
+          "name": "Identification and Authentication | Multi-Factor Authentication to Non-Privileged Accounts",
+          "description": "Implement multi-factor authentication for access to non-privileged accounts.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-003", "M365-001", "M365-002"]
+        },
+        {
+          "id": "IA-4",
+          "name": "Identifier Management",
+          "description": "Manage system identifiers by receiving authorization and unique identifiers.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-002"]
+        },
+        {
+          "id": "IA-5",
+          "name": "Authenticator Management",
+          "description": "Manage system authenticators.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-002", "IAM-003", "M365-006"]
+        },
+        {
+          "id": "IA-5(1)",
+          "name": "Authenticator Management | Password-Based Authentication",
+          "description": "Enforce password complexity and rotation requirements.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["IAM-003"]
+        }
+      ]
+    },
+    {
+      "id": "IR",
+      "name": "Incident Response",
+      "description": "Incident response policy and procedures",
+      "controls": [
+        {
+          "id": "IR-4",
+          "name": "Incident Handling",
+          "description": "Implement incident handling capability.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-001", "DEF-003"]
+        },
+        {
+          "id": "IR-5",
+          "name": "Incident Monitoring",
+          "description": "Track and document incidents.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-001", "LOG-004"]
+        },
+        {
+          "id": "IR-6",
+          "name": "Incident Reporting",
+          "description": "Require incident reporting to appropriate authorities.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-003"]
+        }
+      ]
+    },
+    {
+      "id": "RA",
+      "name": "Risk Assessment",
+      "description": "Risk assessment policy and procedures",
+      "controls": [
+        {
+          "id": "RA-3",
+          "name": "Risk Assessment",
+          "description": "Conduct risk assessments.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-004"]
+        },
+        {
+          "id": "RA-5",
+          "name": "Vulnerability Monitoring and Scanning",
+          "description": "Monitor and scan for vulnerabilities.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-005", "VM-002"]
+        }
+      ]
+    },
+    {
+      "id": "SC",
+      "name": "System and Communications Protection",
+      "description": "System and communications protection policy",
+      "controls": [
+        {
+          "id": "SC-1",
+          "name": "Policy and Procedures",
+          "description": "Develop system and communications protection policy.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "SC-5",
+          "name": "Denial-of-Service Protection",
+          "description": "Protect against denial-of-service attacks.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["NET-004", "WAF-001"]
+        },
+        {
+          "id": "SC-7",
+          "name": "Boundary Protection",
+          "description": "Monitor and control communications at external boundaries.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["NET-002", "NET-003", "WAF-001", "WAF-002"]
+        },
+        {
+          "id": "SC-7(3)",
+          "name": "Boundary Protection | Access Points",
+          "description": "Limit the number of external network connections.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["NET-001", "NET-005"]
+        },
+        {
+          "id": "SC-8",
+          "name": "Transmission Confidentiality and Integrity",
+          "description": "Protect the confidentiality and integrity of transmitted information.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["APP-001", "APP-002", "DAT-003", "SQL-004"]
+        },
+        {
+          "id": "SC-8(1)",
+          "name": "Transmission Confidentiality | Cryptographic Protection",
+          "description": "Implement cryptographic mechanisms for transmission protection.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["APP-001", "APP-002", "VPN-001"]
+        },
+        {
+          "id": "SC-12",
+          "name": "Cryptographic Key Establishment and Management",
+          "description": "Establish and manage cryptographic keys.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DAT-004"]
+        },
+        {
+          "id": "SC-13",
+          "name": "Cryptographic Protection",
+          "description": "Implement FIPS-validated cryptography.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DAT-001", "VM-001"]
+        },
+        {
+          "id": "SC-28",
+          "name": "Protection of Information at Rest",
+          "description": "Protect the confidentiality and integrity of information at rest.",
+          "priority": "P1",
+          "baseline": ["MODERATE", "HIGH"],
+          "mapped_controls": ["DAT-001", "DAT-005", "VM-001"]
+        }
+      ]
+    },
+    {
+      "id": "SI",
+      "name": "System and Information Integrity",
+      "description": "System and information integrity policy",
+      "controls": [
+        {
+          "id": "SI-2",
+          "name": "Flaw Remediation",
+          "description": "Identify, report, and correct system flaws.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["VM-002", "DEF-005"]
+        },
+        {
+          "id": "SI-3",
+          "name": "Malicious Code Protection",
+          "description": "Implement malicious code protection mechanisms.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-002", "VM-002"]
+        },
+        {
+          "id": "SI-4",
+          "name": "System Monitoring",
+          "description": "Monitor the system to detect attacks and indicators of potential attacks.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-001", "DEF-002", "LOG-004", "LOG-005"]
+        },
+        {
+          "id": "SI-5",
+          "name": "Security Alerts, Advisories, and Directives",
+          "description": "Receive and respond to security alerts and advisories.",
+          "priority": "P1",
+          "baseline": ["LOW", "MODERATE", "HIGH"],
+          "mapped_controls": ["DEF-003"]
+        }
+      ]
+    }
+  ],
+  "total_controls": 62,
+  "total_control_families": 10
+}

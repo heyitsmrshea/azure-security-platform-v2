@@ -1,0 +1,18 @@
+{
+  "tenant_id": "demo",
+  "dashboard_type": "executive",
+  "timestamp": "2026-01-10T06:50:21.242140",
+  "date": "20260110",
+  "data": {
+    "security_score": 72.5,
+    "compliance_score": 68.5,
+    "mfa_coverage": 87.3,
+    "device_compliance": 92.8,
+    "critical_risks": 3,
+    "high_risks": 12,
+    "total_alerts": 25,
+    "global_admins": 3,
+    "risky_users": 2,
+    "backup_health": 94.5
+  }
+}

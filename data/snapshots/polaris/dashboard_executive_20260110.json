@@ -1,0 +1,18 @@
+{
+  "tenant_id": "polaris",
+  "dashboard_type": "executive",
+  "timestamp": "2026-01-10T14:34:04.036332",
+  "date": "20260110",
+  "data": {
+    "security_score": 635.92,
+    "compliance_score": 54.3,
+    "mfa_coverage": 79.5,
+    "device_compliance": 0.0,
+    "critical_risks": 0,
+    "high_risks": 0,
+    "total_alerts": 23,
+    "global_admins": 5,
+    "risky_users": 0,
+    "backup_health": 0.0
+  }
+}

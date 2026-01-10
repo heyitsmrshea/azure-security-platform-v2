@@ -86,10 +86,6 @@ export class ApiClient {
       failing: 2,
       partial: 1,
     }]) // Minimal mock fallback
-    if (endpoint.includes('/it-staff/analytics/departments')) return import('@/mocks/data').then(m => ({
-      mfa_by_department: import('@/components/it-staff/DepartmentBreakdown').then(m => m.mockMFAByDepartment),
-      devices_by_department: import('@/components/it-staff/DepartmentBreakdown').then(m => m.mockDevicesByDepartment),
-    }))
     if (endpoint.includes('/compliance/controls')) return import('@/mocks/data').then(m => m.mockComplianceControls)
     if (endpoint.includes('/compliance/mapping')) return import('@/mocks/data').then(m => [])
 

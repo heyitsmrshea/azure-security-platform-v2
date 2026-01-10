@@ -29,6 +29,8 @@ class BackupStatus(str, Enum):
     HEALTHY = "healthy"
     WARNING = "warning"
     CRITICAL = "critical"
+    AT_RISK = "at_risk"
+    NOT_CONFIGURED = "not_configured"
     UNKNOWN = "unknown"
 
 
@@ -74,11 +76,31 @@ class MetricTrend(BaseModel):
     period: str = "7d"
 
 
+class BenchmarkComparison(BaseModel):
+    """Comparison against a benchmark group"""
+    average_score: float  # Raw score points
+    average_percent: float  # Percentage
+    comparison: str  # "above", "below", "equal"
+    difference: float  # Percentage difference (positive = above average)
+    size_category: Optional[str] = None  # For size-based benchmarks
+
+
+class IndustryBenchmarks(BaseModel):
+    """Microsoft Secure Score benchmark comparisons"""
+    your_score_percent: float
+    all_tenants: Optional[BenchmarkComparison] = None
+    similar_size: Optional[BenchmarkComparison] = None
+    industry: Optional[BenchmarkComparison] = None
+    organization_size: Optional[int] = None  # Licensed user count
+
+
 class SecurityScore(BaseModel):
-    """Microsoft Secure Score metric"""
-    current_score: float = Field(..., ge=0, le=100)
-    max_score: float
-    percentile: Optional[int] = Field(None, ge=0, le=100)
+    """Microsoft Secure Score metric - Note: Score is points-based, not percentage"""
+    current_score: float = Field(..., ge=0)  # Actual score points (can exceed 100)
+    max_score: float  # Maximum possible score points
+    score_percent: float = Field(..., ge=0, le=100)  # Percentage: (current/max)*100
+    percentile: Optional[int] = Field(None, ge=0, le=100)  # Comparison vs other tenants
+    benchmarks: Optional[IndustryBenchmarks] = None  # Industry/size comparisons
     trend: Optional[MetricTrend] = None
     comparison_label: Optional[str] = None  # e.g., "Top 35%"
     last_updated: datetime

@@ -1,0 +1,545 @@
+{
+  "framework": {
+    "id": "SOC2_2017",
+    "name": "SOC 2 Trust Services Criteria",
+    "version": "2017",
+    "release_date": "2017-04-01",
+    "url": "https://www.aicpa.org/interestareas/frc/assuranceadvisoryservices/trustservicescriteria.html"
+  },
+  "trust_service_categories": [
+    {
+      "id": "CC",
+      "name": "Common Criteria (Security)",
+      "description": "Controls related to the security of the system",
+      "criteria": [
+        {
+          "id": "CC1.1",
+          "name": "COSO Principle 1",
+          "description": "The entity demonstrates a commitment to integrity and ethical values.",
+          "points_of_focus": [
+            "Sets the tone at the top",
+            "Establishes standards of conduct",
+            "Evaluates adherence to standards of conduct"
+          ],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "CC1.2",
+          "name": "COSO Principle 2",
+          "description": "The board of directors demonstrates independence from management and exercises oversight.",
+          "points_of_focus": [
+            "Establishes oversight responsibilities",
+            "Applies relevant expertise",
+            "Operates independently"
+          ],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "CC2.1",
+          "name": "COSO Principle 13",
+          "description": "The entity obtains or generates and uses relevant, quality information.",
+          "points_of_focus": [
+            "Identifies information requirements",
+            "Captures internal and external sources of data",
+            "Processes relevant data into information"
+          ],
+          "mapped_controls": ["LOG-001", "LOG-002", "LOG-004"]
+        },
+        {
+          "id": "CC2.2",
+          "name": "COSO Principle 14",
+          "description": "The entity internally communicates information necessary to support objectives.",
+          "points_of_focus": [
+            "Communicates internal control information",
+            "Communicates with the board of directors"
+          ],
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "CC2.3",
+          "name": "COSO Principle 15",
+          "description": "The entity communicates with external parties.",
+          "points_of_focus": [
+            "Communicates to external parties",
+            "Enables inbound communications"
+          ],
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "CC3.1",
+          "name": "COSO Principle 6",
+          "description": "The entity specifies objectives with sufficient clarity to enable identification and assessment of risks.",
+          "points_of_focus": [
+            "Operations objectives",
+            "External reporting objectives",
+            "Compliance objectives"
+          ],
+          "mapped_controls": ["GOV-001", "DEF-004"]
+        },
+        {
+          "id": "CC3.2",
+          "name": "COSO Principle 7",
+          "description": "The entity identifies risks to the achievement of its objectives and analyzes risks.",
+          "points_of_focus": [
+            "Includes entity, subsidiary, division, operating unit levels",
+            "Analyzes internal and external factors",
+            "Involves appropriate management"
+          ],
+          "mapped_controls": ["DEF-004", "DEF-005"]
+        },
+        {
+          "id": "CC3.3",
+          "name": "COSO Principle 8",
+          "description": "The entity considers the potential for fraud in assessing risks.",
+          "points_of_focus": [
+            "Considers various types of fraud",
+            "Assesses incentive and pressures",
+            "Assesses opportunities"
+          ],
+          "mapped_controls": ["IAM-001", "PIM-001", "LOG-001"]
+        },
+        {
+          "id": "CC3.4",
+          "name": "COSO Principle 9",
+          "description": "The entity identifies and assesses changes that could significantly impact internal control.",
+          "points_of_focus": [
+            "Assesses changes in external environment",
+            "Assesses changes in leadership",
+            "Assesses changes in business model"
+          ],
+          "mapped_controls": ["GOV-001", "DEF-001"]
+        },
+        {
+          "id": "CC4.1",
+          "name": "COSO Principle 16",
+          "description": "The entity selects, develops, and performs ongoing evaluations.",
+          "points_of_focus": [
+            "Considers a mix of ongoing and separate evaluations",
+            "Considers rate of change",
+            "Establishes baseline understanding"
+          ],
+          "mapped_controls": ["DEF-001", "DEF-004"]
+        },
+        {
+          "id": "CC4.2",
+          "name": "COSO Principle 17",
+          "description": "The entity evaluates and communicates internal control deficiencies.",
+          "points_of_focus": [
+            "Assesses results",
+            "Communicates deficiencies",
+            "Monitors corrective actions"
+          ],
+          "mapped_controls": ["DEF-003", "DEF-004"]
+        },
+        {
+          "id": "CC5.1",
+          "name": "COSO Principle 10",
+          "description": "The entity selects and develops control activities.",
+          "points_of_focus": [
+            "Integrates with risk assessment",
+            "Considers entity-specific factors",
+            "Determines relevant business processes"
+          ],
+          "mapped_controls": ["GOV-001", "NET-002", "NET-003"]
+        },
+        {
+          "id": "CC5.2",
+          "name": "COSO Principle 11",
+          "description": "The entity selects and develops general controls over technology.",
+          "points_of_focus": [
+            "Determines dependency between use of technology and general controls",
+            "Establishes relevant technology infrastructure controls",
+            "Establishes relevant security management controls"
+          ],
+          "mapped_controls": ["DEF-001", "DEF-002", "VM-002"]
+        },
+        {
+          "id": "CC5.3",
+          "name": "COSO Principle 12",
+          "description": "The entity deploys control activities through policies and procedures.",
+          "points_of_focus": [
+            "Establishes policies and procedures",
+            "Establishes responsibility and accountability",
+            "Performs in a timely manner"
+          ],
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "CC6.1",
+          "name": "Logical and Physical Access Controls",
+          "description": "The entity implements logical access security software and processes.",
+          "points_of_focus": [
+            "Identifies and manages infrastructure and software",
+            "Restricts logical access",
+            "Identifies and authenticates users",
+            "Considers network segmentation",
+            "Manages points of access"
+          ],
+          "mapped_controls": ["IAM-001", "IAM-002", "IAM-003", "M365-001", "M365-002", "NET-002", "NET-003", "NET-005"]
+        },
+        {
+          "id": "CC6.2",
+          "name": "Prior to Registration and Authorization",
+          "description": "Prior to registration, the entity registers authorized users and grants access.",
+          "points_of_focus": [
+            "Controls access credentials",
+            "Removes access that is no longer required",
+            "Reviews appropriateness of access credentials"
+          ],
+          "mapped_controls": ["IAM-001", "IAM-005", "PIM-001", "PIM-003"]
+        },
+        {
+          "id": "CC6.3",
+          "name": "Access Security Removal",
+          "description": "The entity removes access to protected information assets when appropriate.",
+          "points_of_focus": [
+            "Removes access for terminated employees",
+            "Removes access for inactive accounts",
+            "Reviews access periodically"
+          ],
+          "mapped_controls": ["IAM-005", "PIM-003"]
+        },
+        {
+          "id": "CC6.6",
+          "name": "Logical Access Measures",
+          "description": "The entity implements logical access security measures.",
+          "points_of_focus": [
+            "Restricts access",
+            "Protects identification and authentication credentials",
+            "Prevents unauthorized access"
+          ],
+          "mapped_controls": ["IAM-003", "M365-001", "DAT-004"]
+        },
+        {
+          "id": "CC6.7",
+          "name": "Transmission and Movement",
+          "description": "The entity restricts the transmission and movement of data.",
+          "points_of_focus": [
+            "Restricts data transmission",
+            "Protects data during transmission",
+            "Protects removal media"
+          ],
+          "mapped_controls": ["APP-001", "APP-002", "DAT-003", "M365-004"]
+        },
+        {
+          "id": "CC6.8",
+          "name": "Malicious Software Prevention",
+          "description": "The entity implements controls to prevent or detect malicious software.",
+          "points_of_focus": [
+            "Restricts installation of software",
+            "Detects malicious software",
+            "Updates protection mechanisms"
+          ],
+          "mapped_controls": ["DEF-002", "VM-002"]
+        },
+        {
+          "id": "CC7.1",
+          "name": "Detection and Monitoring",
+          "description": "The entity uses detection and monitoring procedures.",
+          "points_of_focus": [
+            "Implements detection policies",
+            "Monitors system components",
+            "Implements change detection mechanisms"
+          ],
+          "mapped_controls": ["DEF-001", "DEF-002", "LOG-004", "LOG-005"]
+        },
+        {
+          "id": "CC7.2",
+          "name": "Security Monitoring",
+          "description": "The entity monitors system components for anomalies.",
+          "points_of_focus": [
+            "Monitors for security events",
+            "Monitors for anomalies",
+            "Analyzes detected events"
+          ],
+          "mapped_controls": ["DEF-001", "LOG-004", "M365-007"]
+        },
+        {
+          "id": "CC7.3",
+          "name": "Security Evaluation",
+          "description": "The entity evaluates security events to determine whether they could impact objectives.",
+          "points_of_focus": [
+            "Develops response procedures",
+            "Communicates and reviews events",
+            "Develops incident response programs"
+          ],
+          "mapped_controls": ["DEF-001", "DEF-003"]
+        },
+        {
+          "id": "CC7.4",
+          "name": "Incident Response",
+          "description": "The entity responds to identified security incidents.",
+          "points_of_focus": [
+            "Assigns roles and responsibilities",
+            "Contains security incidents",
+            "Mitigates ongoing events"
+          ],
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "CC7.5",
+          "name": "Incident Recovery",
+          "description": "The entity identifies, develops, and implements activities to recover from incidents.",
+          "points_of_focus": [
+            "Restores affected environment",
+            "Communicates regarding incidents",
+            "Evaluates incidents for improvement"
+          ],
+          "mapped_controls": ["BAK-001", "BAK-002"]
+        },
+        {
+          "id": "CC8.1",
+          "name": "Change Management",
+          "description": "The entity authorizes, designs, develops, configures, tests, and implements changes.",
+          "points_of_focus": [
+            "Manages changes throughout the lifecycle",
+            "Authorizes changes",
+            "Designs and develops changes"
+          ],
+          "mapped_controls": ["GOV-001", "GOV-005"]
+        },
+        {
+          "id": "CC9.1",
+          "name": "Risk Mitigation Through Controls",
+          "description": "The entity identifies, selects, and develops risk mitigation activities.",
+          "points_of_focus": [
+            "Considers risk mitigation activities",
+            "Assesses residual risk",
+            "Implements controls"
+          ],
+          "mapped_controls": ["DEF-001", "DEF-002", "DEF-004"]
+        },
+        {
+          "id": "CC9.2",
+          "name": "Risk Assessment and Management",
+          "description": "The entity assesses and manages risks associated with vendors and business partners.",
+          "points_of_focus": [
+            "Establishes requirements for vendor management",
+            "Assesses vendor risks",
+            "Implements controls over vendors"
+          ],
+          "mapped_controls": ["M365-005", "IAM-005"]
+        }
+      ]
+    },
+    {
+      "id": "A",
+      "name": "Availability",
+      "description": "Controls related to system availability",
+      "criteria": [
+        {
+          "id": "A1.1",
+          "name": "Availability Commitment",
+          "description": "The entity maintains availability commitments and performance standards.",
+          "points_of_focus": [
+            "Identifies and documents availability requirements",
+            "Measures availability",
+            "Monitors availability"
+          ],
+          "mapped_controls": ["DEF-001", "LOG-004"]
+        },
+        {
+          "id": "A1.2",
+          "name": "Environmental Protections",
+          "description": "The entity authorizes, designs, develops, and implements environmental protections.",
+          "points_of_focus": [
+            "Controls environmental threats",
+            "Controls power availability",
+            "Controls environmental conditions"
+          ],
+          "mapped_controls": ["NET-004", "BAK-001"]
+        },
+        {
+          "id": "A1.3",
+          "name": "Recovery Procedures",
+          "description": "The entity tests recovery procedures supporting system recovery.",
+          "points_of_focus": [
+            "Tests recovery procedures",
+            "Documents recovery procedures",
+            "Implements recovery procedures"
+          ],
+          "mapped_controls": ["BAK-001", "BAK-002"]
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Confidentiality",
+      "description": "Controls related to data confidentiality",
+      "criteria": [
+        {
+          "id": "C1.1",
+          "name": "Confidential Information Identification",
+          "description": "The entity identifies and maintains confidential information.",
+          "points_of_focus": [
+            "Identifies confidential information",
+            "Protects confidential information",
+            "Destroys confidential information"
+          ],
+          "mapped_controls": ["DAT-001", "DAT-002", "DAT-004"]
+        },
+        {
+          "id": "C1.2",
+          "name": "Confidentiality Disposal",
+          "description": "The entity disposes of confidential information to meet objectives.",
+          "points_of_focus": [
+            "Identifies data for disposal",
+            "Removes data from production",
+            "Renders data irretrievable"
+          ],
+          "mapped_controls": ["DAT-004"]
+        }
+      ]
+    },
+    {
+      "id": "PI",
+      "name": "Processing Integrity",
+      "description": "Controls related to processing integrity",
+      "criteria": [
+        {
+          "id": "PI1.1",
+          "name": "Processing Integrity Definitions",
+          "description": "The entity obtains or generates, uses, and communicates relevant information.",
+          "points_of_focus": [
+            "Defines processing specifications",
+            "Monitors processing results",
+            "Documents system processing"
+          ],
+          "mapped_controls": ["LOG-002", "SQL-001"]
+        },
+        {
+          "id": "PI1.2",
+          "name": "Processing Inputs",
+          "description": "System inputs are complete, accurate, and recorded in a timely manner.",
+          "points_of_focus": [
+            "Defines inputs",
+            "Evaluates inputs",
+            "Records inputs"
+          ],
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "PI1.3",
+          "name": "Processing Activities",
+          "description": "System processes are complete, accurate, timely, and authorized.",
+          "points_of_focus": [
+            "Processes as designed",
+            "Maintains accuracy",
+            "Maintains timeliness"
+          ],
+          "mapped_controls": ["LOG-002", "DEF-001"]
+        },
+        {
+          "id": "PI1.4",
+          "name": "Processing Outputs",
+          "description": "System outputs are complete, accurate, and distributed appropriately.",
+          "points_of_focus": [
+            "Outputs completely and accurately",
+            "Distributes appropriately",
+            "Protects outputs"
+          ],
+          "mapped_controls": ["DAT-001", "LOG-002"]
+        },
+        {
+          "id": "PI1.5",
+          "name": "Processing Errors",
+          "description": "The entity implements procedures to identify processing errors.",
+          "points_of_focus": [
+            "Defines errors",
+            "Identifies errors",
+            "Corrects errors"
+          ],
+          "mapped_controls": ["LOG-002", "DEF-003"]
+        }
+      ]
+    },
+    {
+      "id": "P",
+      "name": "Privacy",
+      "description": "Controls related to privacy (optional)",
+      "criteria": [
+        {
+          "id": "P1.1",
+          "name": "Privacy Notice",
+          "description": "The entity provides notice to data subjects about its privacy practices.",
+          "points_of_focus": [
+            "Communicates to data subjects",
+            "Provides privacy notices"
+          ],
+          "mapped_controls": []
+        },
+        {
+          "id": "P2.1",
+          "name": "Privacy Choices and Consent",
+          "description": "The entity communicates choices and obtains consent.",
+          "points_of_focus": [
+            "Communicates choices",
+            "Obtains consent"
+          ],
+          "mapped_controls": ["M365-005"]
+        },
+        {
+          "id": "P3.1",
+          "name": "Privacy Collection",
+          "description": "Personal information is collected consistent with objectives.",
+          "points_of_focus": [
+            "Limits collection",
+            "Collects by fair means"
+          ],
+          "mapped_controls": []
+        },
+        {
+          "id": "P4.1",
+          "name": "Privacy Use and Retention",
+          "description": "Personal information is limited to intended purposes.",
+          "points_of_focus": [
+            "Limits use",
+            "Retains information"
+          ],
+          "mapped_controls": ["LOG-001"]
+        },
+        {
+          "id": "P5.1",
+          "name": "Privacy Access",
+          "description": "The entity grants data subjects access to their personal information.",
+          "points_of_focus": [
+            "Provides access",
+            "Authenticates data subjects"
+          ],
+          "mapped_controls": ["IAM-003"]
+        },
+        {
+          "id": "P6.1",
+          "name": "Privacy Disclosure and Notification",
+          "description": "Personal information is disclosed to third parties only as described.",
+          "points_of_focus": [
+            "Discloses to third parties",
+            "Notifies of disclosures"
+          ],
+          "mapped_controls": ["M365-004"]
+        },
+        {
+          "id": "P7.1",
+          "name": "Privacy Quality",
+          "description": "The entity collects and maintains accurate personal information.",
+          "points_of_focus": [
+            "Maintains accuracy",
+            "Relevance of information"
+          ],
+          "mapped_controls": []
+        },
+        {
+          "id": "P8.1",
+          "name": "Privacy Monitoring and Enforcement",
+          "description": "The entity monitors compliance with privacy commitments.",
+          "points_of_focus": [
+            "Inquiries and complaints",
+            "Monitoring and remediation"
+          ],
+          "mapped_controls": ["DEF-001", "LOG-004"]
+        }
+      ]
+    }
+  ],
+  "total_criteria": 48
+}

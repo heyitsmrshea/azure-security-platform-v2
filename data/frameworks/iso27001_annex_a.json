@@ -1,0 +1,691 @@
+{
+  "framework": {
+    "id": "ISO27001_2022",
+    "name": "ISO/IEC 27001:2022 Annex A",
+    "version": "2022",
+    "release_date": "2022-10-25",
+    "url": "https://www.iso.org/standard/27001"
+  },
+  "control_categories": [
+    {
+      "id": "5",
+      "name": "Organizational Controls",
+      "description": "Controls related to organizational security measures",
+      "controls": [
+        {
+          "id": "5.1",
+          "name": "Policies for information security",
+          "description": "Information security policy and topic-specific policies shall be defined, approved by management, published, communicated to relevant personnel.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.2",
+          "name": "Information security roles and responsibilities",
+          "description": "Information security roles and responsibilities shall be defined and allocated.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001", "IAM-001"]
+        },
+        {
+          "id": "5.3",
+          "name": "Segregation of duties",
+          "description": "Conflicting duties and conflicting areas of responsibility shall be segregated.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "PIM-001"]
+        },
+        {
+          "id": "5.4",
+          "name": "Management responsibilities",
+          "description": "Management shall require all personnel to apply information security in accordance with established policies.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.5",
+          "name": "Contact with authorities",
+          "description": "The organization shall establish and maintain contact with relevant authorities.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "5.6",
+          "name": "Contact with special interest groups",
+          "description": "The organization shall establish and maintain contact with special interest groups.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "5.7",
+          "name": "Threat intelligence",
+          "description": "Information relating to information security threats shall be collected and analyzed.",
+          "control_type": "Detective",
+          "mapped_controls": ["DEF-001", "DEF-002", "M365-007"]
+        },
+        {
+          "id": "5.8",
+          "name": "Information security in project management",
+          "description": "Information security shall be integrated into project management.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.9",
+          "name": "Inventory of information and other associated assets",
+          "description": "An inventory of information and other associated assets shall be developed and maintained.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-003"]
+        },
+        {
+          "id": "5.10",
+          "name": "Acceptable use of information and other associated assets",
+          "description": "Rules for acceptable use shall be identified, documented and implemented.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.11",
+          "name": "Return of assets",
+          "description": "Personnel and other interested parties shall return all organizational assets upon change.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-005"]
+        },
+        {
+          "id": "5.12",
+          "name": "Classification of information",
+          "description": "Information shall be classified according to information security needs.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-002", "GOV-003"]
+        },
+        {
+          "id": "5.13",
+          "name": "Labelling of information",
+          "description": "An appropriate set of procedures for information labelling shall be developed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-003"]
+        },
+        {
+          "id": "5.14",
+          "name": "Information transfer",
+          "description": "Information transfer rules, procedures, or agreements shall exist.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-003", "APP-001", "M365-004"]
+        },
+        {
+          "id": "5.15",
+          "name": "Access control",
+          "description": "Rules to control physical and logical access shall be established.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "IAM-003", "NET-002", "NET-003"]
+        },
+        {
+          "id": "5.16",
+          "name": "Identity management",
+          "description": "The full lifecycle of identities shall be managed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-002", "IAM-005"]
+        },
+        {
+          "id": "5.17",
+          "name": "Authentication information",
+          "description": "Allocation and management of authentication information shall be controlled.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-003", "M365-001", "M365-002", "M365-006"]
+        },
+        {
+          "id": "5.18",
+          "name": "Access rights",
+          "description": "Access rights shall be provisioned, reviewed, modified and removed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "PIM-001", "PIM-002", "PIM-003"]
+        },
+        {
+          "id": "5.19",
+          "name": "Information security in supplier relationships",
+          "description": "Processes and procedures shall be defined to manage security risks associated with suppliers.",
+          "control_type": "Preventive",
+          "mapped_controls": ["M365-005"]
+        },
+        {
+          "id": "5.20",
+          "name": "Addressing information security within supplier agreements",
+          "description": "Relevant security requirements shall be established with each supplier.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.21",
+          "name": "Managing information security in the ICT supply chain",
+          "description": "Processes shall be defined to manage ICT supply chain security risks.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.22",
+          "name": "Monitoring, review and change management of supplier services",
+          "description": "The organization shall monitor, review and manage changes to supplier services.",
+          "control_type": "Detective",
+          "mapped_controls": ["LOG-002"]
+        },
+        {
+          "id": "5.23",
+          "name": "Information security for use of cloud services",
+          "description": "Processes shall be established for acquisition, use, management and exit from cloud services.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-001", "GOV-001"]
+        },
+        {
+          "id": "5.24",
+          "name": "Information security incident management planning and preparation",
+          "description": "The organization shall plan and prepare for managing information security incidents.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "5.25",
+          "name": "Assessment and decision on information security events",
+          "description": "The organization shall assess security events and decide if they are incidents.",
+          "control_type": "Detective",
+          "mapped_controls": ["DEF-001", "DEF-003"]
+        },
+        {
+          "id": "5.26",
+          "name": "Response to information security incidents",
+          "description": "Information security incidents shall be responded to in accordance with procedures.",
+          "control_type": "Corrective",
+          "mapped_controls": ["DEF-003"]
+        },
+        {
+          "id": "5.27",
+          "name": "Learning from information security incidents",
+          "description": "Knowledge gained from security incidents shall be used to strengthen controls.",
+          "control_type": "Corrective",
+          "mapped_controls": ["DEF-003", "DEF-004"]
+        },
+        {
+          "id": "5.28",
+          "name": "Collection of evidence",
+          "description": "The organization shall establish procedures for identification and collection of evidence.",
+          "control_type": "Detective",
+          "mapped_controls": ["LOG-001", "LOG-002"]
+        },
+        {
+          "id": "5.29",
+          "name": "Information security during disruption",
+          "description": "The organization shall plan how to maintain security during disruption.",
+          "control_type": "Preventive",
+          "mapped_controls": ["BAK-001", "BAK-002"]
+        },
+        {
+          "id": "5.30",
+          "name": "ICT readiness for business continuity",
+          "description": "ICT readiness shall be planned, implemented, maintained and tested.",
+          "control_type": "Preventive",
+          "mapped_controls": ["BAK-001", "BAK-002", "BAK-003"]
+        },
+        {
+          "id": "5.31",
+          "name": "Legal, statutory, regulatory and contractual requirements",
+          "description": "Legal, regulatory and contractual requirements shall be identified and documented.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.32",
+          "name": "Intellectual property rights",
+          "description": "The organization shall implement procedures to protect intellectual property rights.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "5.33",
+          "name": "Protection of records",
+          "description": "Records shall be protected from loss, destruction, falsification and unauthorized access.",
+          "control_type": "Preventive",
+          "mapped_controls": ["LOG-001", "DAT-001"]
+        },
+        {
+          "id": "5.34",
+          "name": "Privacy and protection of PII",
+          "description": "The organization shall identify requirements regarding PII protection.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-002", "DAT-004"]
+        },
+        {
+          "id": "5.35",
+          "name": "Independent review of information security",
+          "description": "The organization's approach to managing security shall be reviewed independently.",
+          "control_type": "Detective",
+          "mapped_controls": ["DEF-004"]
+        },
+        {
+          "id": "5.36",
+          "name": "Compliance with policies, rules and standards",
+          "description": "Compliance with security policies, rules and standards shall be regularly reviewed.",
+          "control_type": "Detective",
+          "mapped_controls": ["GOV-001", "DEF-004"]
+        },
+        {
+          "id": "5.37",
+          "name": "Documented operating procedures",
+          "description": "Operating procedures for information processing facilities shall be documented.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "People Controls",
+      "description": "Controls related to personnel security",
+      "controls": [
+        {
+          "id": "6.1",
+          "name": "Screening",
+          "description": "Background verification checks shall be carried out on candidates.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "6.2",
+          "name": "Terms and conditions of employment",
+          "description": "Employment contractual agreements shall state security responsibilities.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "6.3",
+          "name": "Information security awareness, education and training",
+          "description": "Personnel shall receive appropriate security awareness training.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "6.4",
+          "name": "Disciplinary process",
+          "description": "A disciplinary process shall be formalized for personnel who commit violations.",
+          "control_type": "Corrective",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "6.5",
+          "name": "Responsibilities after termination or change of employment",
+          "description": "Security responsibilities that remain valid after termination shall be defined.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-005"]
+        },
+        {
+          "id": "6.6",
+          "name": "Confidentiality or non-disclosure agreements",
+          "description": "Confidentiality agreements shall be identified, documented and reviewed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "6.7",
+          "name": "Remote working",
+          "description": "Security measures shall be implemented when personnel are working remotely.",
+          "control_type": "Preventive",
+          "mapped_controls": ["VPN-001", "VPN-002", "IAM-004"]
+        },
+        {
+          "id": "6.8",
+          "name": "Information security event reporting",
+          "description": "The organization shall provide a mechanism for personnel to report security events.",
+          "control_type": "Detective",
+          "mapped_controls": ["DEF-003"]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Physical Controls",
+      "description": "Controls related to physical security",
+      "controls": [
+        {
+          "id": "7.1",
+          "name": "Physical security perimeters",
+          "description": "Security perimeters shall be defined and used to protect areas.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.2",
+          "name": "Physical entry",
+          "description": "Secure areas shall be protected by appropriate entry controls.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.3",
+          "name": "Securing offices, rooms and facilities",
+          "description": "Physical security for offices, rooms and facilities shall be designed and implemented.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.4",
+          "name": "Physical security monitoring",
+          "description": "Premises shall be continuously monitored for unauthorized access.",
+          "control_type": "Detective",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.5",
+          "name": "Protecting against physical and environmental threats",
+          "description": "Protection against physical and environmental threats shall be designed.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.6",
+          "name": "Working in secure areas",
+          "description": "Security measures for working in secure areas shall be designed.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.7",
+          "name": "Clear desk and clear screen",
+          "description": "Clear desk rules and clear screen rules shall be defined and enforced.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.8",
+          "name": "Equipment siting and protection",
+          "description": "Equipment shall be sited securely and protected.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.9",
+          "name": "Security of assets off-premises",
+          "description": "Off-site assets shall be protected.",
+          "control_type": "Preventive",
+          "mapped_controls": ["VM-001"]
+        },
+        {
+          "id": "7.10",
+          "name": "Storage media",
+          "description": "Storage media shall be managed through their lifecycle.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-001", "VM-001"]
+        },
+        {
+          "id": "7.11",
+          "name": "Supporting utilities",
+          "description": "Information processing facilities shall be protected from power failures.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.12",
+          "name": "Cabling security",
+          "description": "Cables carrying power and data shall be protected from interception.",
+          "control_type": "Preventive",
+          "mapped_controls": []
+        },
+        {
+          "id": "7.13",
+          "name": "Equipment maintenance",
+          "description": "Equipment shall be maintained correctly to ensure availability.",
+          "control_type": "Preventive",
+          "mapped_controls": ["VM-002"]
+        },
+        {
+          "id": "7.14",
+          "name": "Secure disposal or re-use of equipment",
+          "description": "Items of equipment containing storage media shall be verified to ensure data is removed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-001"]
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Technological Controls",
+      "description": "Controls related to technology security",
+      "controls": [
+        {
+          "id": "8.1",
+          "name": "User endpoint devices",
+          "description": "Information stored on, processed by or accessible via user endpoint devices shall be protected.",
+          "control_type": "Preventive",
+          "mapped_controls": ["VM-001", "VM-002"]
+        },
+        {
+          "id": "8.2",
+          "name": "Privileged access rights",
+          "description": "The allocation and use of privileged access rights shall be restricted and managed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "PIM-001", "PIM-002", "PIM-004"]
+        },
+        {
+          "id": "8.3",
+          "name": "Information access restriction",
+          "description": "Access to information and other associated assets shall be restricted.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "NET-002", "NET-005"]
+        },
+        {
+          "id": "8.4",
+          "name": "Access to source code",
+          "description": "Read and write access to source code shall be appropriately managed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001"]
+        },
+        {
+          "id": "8.5",
+          "name": "Secure authentication",
+          "description": "Secure authentication technologies shall be implemented based on access restrictions.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-003", "M365-001", "M365-002"]
+        },
+        {
+          "id": "8.6",
+          "name": "Capacity management",
+          "description": "The use of resources shall be monitored and adjusted.",
+          "control_type": "Preventive",
+          "mapped_controls": ["LOG-004", "GOV-004"]
+        },
+        {
+          "id": "8.7",
+          "name": "Protection against malware",
+          "description": "Protection against malware shall be implemented and supported by user awareness.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-002", "VM-002"]
+        },
+        {
+          "id": "8.8",
+          "name": "Management of technical vulnerabilities",
+          "description": "Information about technical vulnerabilities shall be obtained and evaluated.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-005", "VM-002"]
+        },
+        {
+          "id": "8.9",
+          "name": "Configuration management",
+          "description": "Configurations shall be established, documented, implemented, monitored and reviewed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001", "GOV-005"]
+        },
+        {
+          "id": "8.10",
+          "name": "Information deletion",
+          "description": "Information stored in systems shall be deleted when no longer required.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-004"]
+        },
+        {
+          "id": "8.11",
+          "name": "Data masking",
+          "description": "Data masking shall be used in accordance with access policy.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-002"]
+        },
+        {
+          "id": "8.12",
+          "name": "Data leakage prevention",
+          "description": "Data leakage prevention measures shall be applied to systems and networks.",
+          "control_type": "Preventive",
+          "mapped_controls": ["M365-004", "NET-005"]
+        },
+        {
+          "id": "8.13",
+          "name": "Information backup",
+          "description": "Backup copies of information, software and systems shall be maintained.",
+          "control_type": "Preventive",
+          "mapped_controls": ["BAK-001", "BAK-002", "BAK-003"]
+        },
+        {
+          "id": "8.14",
+          "name": "Redundancy of information processing facilities",
+          "description": "Information processing facilities shall be implemented with redundancy.",
+          "control_type": "Preventive",
+          "mapped_controls": ["BAK-001"]
+        },
+        {
+          "id": "8.15",
+          "name": "Logging",
+          "description": "Logs that record activities, exceptions, faults and other events shall be produced.",
+          "control_type": "Detective",
+          "mapped_controls": ["LOG-001", "LOG-002", "LOG-004", "SQL-001"]
+        },
+        {
+          "id": "8.16",
+          "name": "Monitoring activities",
+          "description": "Networks, systems and applications shall be monitored for anomalous behaviour.",
+          "control_type": "Detective",
+          "mapped_controls": ["DEF-001", "LOG-004", "LOG-005"]
+        },
+        {
+          "id": "8.17",
+          "name": "Clock synchronization",
+          "description": "The clocks of information processing systems shall be synchronized.",
+          "control_type": "Preventive",
+          "mapped_controls": ["LOG-001"]
+        },
+        {
+          "id": "8.18",
+          "name": "Use of privileged utility programs",
+          "description": "The use of utility programs that can override system controls shall be restricted.",
+          "control_type": "Preventive",
+          "mapped_controls": ["IAM-001", "PIM-001"]
+        },
+        {
+          "id": "8.19",
+          "name": "Installation of software on operational systems",
+          "description": "Procedures shall be implemented to control installation of software.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "8.20",
+          "name": "Networks security",
+          "description": "Networks and network devices shall be secured, managed and controlled.",
+          "control_type": "Preventive",
+          "mapped_controls": ["NET-002", "NET-003", "NET-004"]
+        },
+        {
+          "id": "8.21",
+          "name": "Security of network services",
+          "description": "Security mechanisms, service levels and requirements shall be identified.",
+          "control_type": "Preventive",
+          "mapped_controls": ["NET-002", "WAF-001", "WAF-002"]
+        },
+        {
+          "id": "8.22",
+          "name": "Segregation of networks",
+          "description": "Groups of information services, users and systems shall be segregated.",
+          "control_type": "Preventive",
+          "mapped_controls": ["NET-003", "NET-005", "AKS-003"]
+        },
+        {
+          "id": "8.23",
+          "name": "Web filtering",
+          "description": "Access to external websites shall be managed to reduce exposure to malicious content.",
+          "control_type": "Preventive",
+          "mapped_controls": ["WAF-001", "WAF-003"]
+        },
+        {
+          "id": "8.24",
+          "name": "Use of cryptography",
+          "description": "Rules for effective use of cryptography shall be defined and implemented.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-001", "DAT-003", "DAT-004", "DAT-005", "VM-001"]
+        },
+        {
+          "id": "8.25",
+          "name": "Secure development life cycle",
+          "description": "Rules for secure development shall be established and applied.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "8.26",
+          "name": "Application security requirements",
+          "description": "Security requirements shall be identified, specified and approved.",
+          "control_type": "Preventive",
+          "mapped_controls": ["APP-001", "APP-002"]
+        },
+        {
+          "id": "8.27",
+          "name": "Secure system architecture and engineering principles",
+          "description": "Principles for engineering secure systems shall be established and applied.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-005", "NET-005"]
+        },
+        {
+          "id": "8.28",
+          "name": "Secure coding",
+          "description": "Secure coding principles shall be applied to software development.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "8.29",
+          "name": "Security testing in development and acceptance",
+          "description": "Security testing processes shall be defined and implemented.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-005"]
+        },
+        {
+          "id": "8.30",
+          "name": "Outsourced development",
+          "description": "The organization shall direct, monitor and review activities related to outsourced development.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "8.31",
+          "name": "Separation of development, test and production environments",
+          "description": "Development, testing and production environments shall be separated.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001"]
+        },
+        {
+          "id": "8.32",
+          "name": "Change management",
+          "description": "Changes to information processing facilities and systems shall be subject to change management.",
+          "control_type": "Preventive",
+          "mapped_controls": ["GOV-001", "GOV-005"]
+        },
+        {
+          "id": "8.33",
+          "name": "Test information",
+          "description": "Test information shall be appropriately selected, protected and managed.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DAT-002"]
+        },
+        {
+          "id": "8.34",
+          "name": "Protection of information systems during audit testing",
+          "description": "Audit tests and activities involving production systems shall be planned.",
+          "control_type": "Preventive",
+          "mapped_controls": ["DEF-004"]
+        }
+      ]
+    }
+  ],
+  "total_controls": 93
+}

@@ -68,30 +68,43 @@ class GraphClient:
     
     async def get_secure_score(self) -> dict:
         """
-        Get current Microsoft Secure Score.
+        Get current Microsoft Secure Score with industry comparisons.
         
         Returns:
-            dict with current_score, max_score, and control details
+            dict with current_score, max_score, control details, and comparative scores
         """
         try:
             result = await self._client.security.secure_scores.get()
             
             if not result or not result.value:
                 logger.warning("no_secure_score_data", tenant_id=self.tenant_id)
-                return {"current_score": 0, "max_score": 100, "controls": []}
+                return {"current_score": 0, "max_score": 100, "controls": [], "comparisons": []}
             
             # Get most recent score
             latest = result.value[0]
+            
+            # Parse comparative scores (industry/size benchmarks from Microsoft)
+            comparisons = []
+            if latest.average_comparative_scores:
+                for comp in latest.average_comparative_scores:
+                    comparisons.append({
+                        "basis": comp.basis or "unknown",  # e.g., "AllTenants", "TotalSeats", "IndustryTypes"
+                        "average_score": comp.average_score or 0,
+                    })
+            
+            # Get license count for size context
+            license_count = latest.licensed_user_count if hasattr(latest, 'licensed_user_count') else None
             
             return {
                 "current_score": latest.current_score or 0,
                 "max_score": latest.max_score or 100,
                 "created_date": latest.created_date_time,
+                "licensed_user_count": license_count,
+                "comparisons": comparisons,
                 "control_scores": [
                     {
                         "name": cs.control_name,
                         "score": cs.score,
-                        "max_score": cs.max_score,
                         "description": cs.description,
                     }
                     for cs in (latest.control_scores or [])
@@ -158,21 +171,58 @@ class GraphClient:
     
     async def get_risky_sign_ins(self, days: int = 7) -> list[dict]:
         """
-        Get risky sign-in events.
+        Get risky sign-in events from Identity Protection.
         
         Args:
             days: Number of days to look back
+            
+        Returns:
+            List of risky sign-in detections with risk details
         """
         try:
-            result = await self._client.identity_protection.risky_service_principal_histories.get()
-            # Note: For sign-ins, use auditLogs/signIns with risk filter
+            # Use riskDetections endpoint which includes both user and sign-in risks
+            result = await self._client.identity_protection.risk_detections.get()
+            
+            # Filter for sign-in linked detections within date range
+            cutoff_date = datetime.utcnow() - timedelta(days=days)
             
             sign_ins = []
-            # Implementation would filter by risk and date
+            for detection in (result.value or []):
+                # Only include sign-in linked detections
+                if detection.detected_date_time and detection.detected_date_time >= cutoff_date:
+                    sign_ins.append({
+                        "id": detection.id,
+                        "user_id": detection.user_id if hasattr(detection, 'user_id') else None,
+                        "user_display_name": detection.user_display_name,
+                        "user_principal_name": detection.user_principal_name,
+                        "risk_level": str(detection.risk_level) if detection.risk_level else "none",
+                        "risk_detail": str(detection.risk_detail) if detection.risk_detail else "",
+                        "risk_state": str(detection.risk_state) if detection.risk_state else "none",
+                        "location": self._extract_location(detection),
+                        "ip_address": detection.ip_address if hasattr(detection, 'ip_address') else "Unknown",
+                        "detected_datetime": detection.detected_date_time,
+                        "activity": str(detection.activity) if hasattr(detection, 'activity') else "Sign-in",
+                        "risk_event_type": str(detection.risk_event_type) if hasattr(detection, 'risk_event_type') else "",
+                    })
+            
             return sign_ins
         except ODataError as e:
             logger.error("risky_sign_ins_error", error=str(e))
             raise
+    
+    def _extract_location(self, detection) -> str:
+        """Extract location string from detection object."""
+        if hasattr(detection, 'location') and detection.location:
+            loc = detection.location
+            parts = []
+            if hasattr(loc, 'city') and loc.city:
+                parts.append(loc.city)
+            if hasattr(loc, 'country_or_region') and loc.country_or_region:
+                parts.append(loc.country_or_region)
+            if parts:
+                return ", ".join(parts)
+        return "Unknown"
+
     
     # ========================================================================
     # Conditional Access
@@ -402,6 +452,99 @@ class GraphClient:
         if initiated_by.app:
             return initiated_by.app.display_name or "Application"
         return "Unknown"
+    
+    # ========================================================================
+    # Third-Party Applications
+    # ========================================================================
+    
+    async def get_third_party_applications(self) -> list[dict]:
+        """
+        Get third-party applications with OAuth consent details.
+        
+        Combines data from service principals and OAuth permission grants
+        to show which apps have been consented to and by whom.
+        
+        Endpoint: /servicePrincipals + /oauth2PermissionGrants
+        """
+        try:
+            # Get all service principals (applications)
+            sp_result = await self._client.service_principals.get()
+            
+            # Get OAuth consent grants
+            grants_result = await self._client.oauth2_permission_grants.get()
+            
+            # Build consent map: app_id -> list of grants
+            consent_map = {}
+            for grant in (grants_result.value or []):
+                client_id = grant.client_id
+                if client_id not in consent_map:
+                    consent_map[client_id] = []
+                consent_map[client_id].append({
+                    "consent_type": str(grant.consent_type) if grant.consent_type else "user",
+                    "principal_id": grant.principal_id,
+                    "scope": grant.scope or "",
+                    "start_time": grant.start_time if hasattr(grant, 'start_time') else None,
+                })
+            
+            # Process service principals
+            apps = []
+            for sp in (sp_result.value or []):
+                # Filter for third-party apps (not Microsoft services)
+                # Skip Microsoft apps and built-in apps
+                app_display_name = sp.display_name or ""
+                if any(ms_name in app_display_name.lower() for ms_name in ["microsoft", "office", "windows", "azure"]):
+                    # Skip Microsoft's own services unless explicitly consented by users
+                    if sp.id not in consent_map:
+                        continue
+                
+                # Get consent info for this app
+                consents = consent_map.get(sp.id, [])
+                
+                # Determine consent type and who consented
+                consent_type = "none"
+                consented_by = "N/A"
+                consented_at = None
+                
+                if consents:
+                    # Check if any admin consent exists
+                    admin_consents = [c for c in consents if c["consent_type"] == "AllPrincipals"]
+                    if admin_consents:
+                        consent_type = "admin"
+                        consented_by = "Administrator"
+                        if admin_consents[0].get("start_time"):
+                            consented_at = admin_consents[0]["start_time"]
+                    else:
+                        consent_type = "user"
+                        consented_by = "User(s)"
+                        if consents[0].get("start_time"):
+                            consented_at = consents[0]["start_time"]
+                
+                # Extract permissions/scopes
+                permissions = []
+                for consent in consents:
+                    if consent.get("scope"):
+                        permissions.extend(consent["scope"].split())
+                permissions = list(set(permissions))  # Deduplicate
+                
+                apps.append({
+                    "id": sp.id,
+                    "app_id": sp.app_id,
+                    "display_name": sp.display_name,
+                    "publisher_name": sp.publisher_name if hasattr(sp, 'publisher_name') else "Unknown Publisher",
+                    "service_principal_type": str(sp.service_principal_type) if sp.service_principal_type else "Application",
+                    "app_description": sp.description if hasattr(sp, 'description') else "",
+                    "permissions": permissions[:10],  # Limit to top 10 for display
+                    "consent_type": consent_type,
+                    "consented_by": consented_by,
+                    "consented_at": consented_at,
+                    "homepage": sp.homepage if hasattr(sp, 'homepage') else None,
+                })
+            
+            return apps
+        except ODataError as e:
+            logger.error("third_party_apps_error", error=str(e))
+            raise
+
     
     # ========================================================================
     # Users

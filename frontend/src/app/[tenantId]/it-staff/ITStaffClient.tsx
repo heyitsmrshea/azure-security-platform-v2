@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { DashboardHeader } from '@/components/shared/DashboardHeader'
-import { StatusBadge, SeverityBadge } from '@/components/shared/StatusBadge'
+import { StatusBadge } from '@/components/shared/StatusBadge'
 import { AlertQueue } from '@/components/it-staff/AlertQueue'
 import { VulnerabilityView } from '@/components/it-staff/VulnerabilityView'
 import { AuditTrail, HighRiskOperations } from '@/components/it-staff/AuditTrail'
 import { DataTable } from '@/components/it-staff/DataTable'
-import { DepartmentBreakdown, mockMFAByDepartment, mockDevicesByDepartment } from '@/components/it-staff/DepartmentBreakdown'
+import { DepartmentBreakdown } from '@/components/it-staff/DepartmentBreakdown'
 import { OffboardingStatus, mockOffboardedUsers } from '@/components/it-staff/OffboardingStatus'
 import { cn, getTimeAgo } from '@/lib/utils'
 import {
@@ -19,10 +19,8 @@ import {
     Laptop,
     UserPlus,
     AppWindow,
-    Share2,
     HardDrive,
     FileText,
-    AlertTriangle,
     UserMinus,
 } from 'lucide-react'
 
@@ -52,21 +50,30 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
     const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
     const [highRiskOps, setHighRiskOps] = useState<HighRiskOperation[]>([])
 
-    // Department Data
-    const [departmentMFAData, setDepartmentMFAData] = useState<any[]>([])
-    const [departmentDeviceData, setDepartmentDeviceData] = useState<any[]>([])
+    // Department Data - typed for visualization components
+    interface DepartmentMetric {
+        department: string
+        total: number
+        compliant: number
+        nonCompliant: number
+        percentage: number
+    }
+    const [departmentMFAData, setDepartmentMFAData] = useState<DepartmentMetric[]>([])
+    const [departmentDeviceData, setDepartmentDeviceData] = useState<DepartmentMetric[]>([])
 
-    // Department mock data can remain static for now as it's visualization only, or could be fetched
-    // For this pass we'll keep the specialized visualization mocks static or move them to data.ts if critical.
-    // Given the previous instructions, let's focus on the main data tables first which are critical.
+    // Helper to extract items from paginated API responses
+    const extractItems = <T,>(data: T[] | { items?: T[] } | null): T[] => {
+        if (!data) return []
+        if (Array.isArray(data)) return data
+        return (data as { items?: T[] })?.items || []
+    }
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setIsLoading(true)
         try {
             const { apiClient } = await import('@/lib/api-client')
 
             // Fetch all data in parallel for the dashboard
-            // In a real app we might only fetch the active tab's data, but for this switch execution we load all to match previous behavior
             const [
                 alertsData,
                 vulnData,
@@ -93,24 +100,22 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                 apiClient.getDepartmentAnalytics(tenantId)
             ])
 
-            // Handle paginated responses - API returns {items: [...]} for some endpoints
-            const extractItems = (data: any) => Array.isArray(data) ? data : (data?.items || [])
-
-            setAlerts(extractItems(alertsData))
-            setVulnerabilities(extractItems(vulnData))
-            setMfaGaps(extractItems(mfaData))
-            setPrivilegedUsers(extractItems(privData))
-            setNonCompliantDevices(extractItems(deviceData))
-            setGuestUsers(extractItems(guestData))
-            setThirdPartyApps(extractItems(appsData))
-            setBackupJobs(extractItems(backupData))
-            setAuditLogs(extractItems(auditData))
-            setHighRiskOps(extractItems(highRiskData))
+            setAlerts(extractItems<Alert>(alertsData))
+            setVulnerabilities(extractItems<Vulnerability>(vulnData))
+            setMfaGaps(extractItems<MFAGap>(mfaData))
+            setPrivilegedUsers(extractItems<PrivilegedUser>(privData))
+            setNonCompliantDevices(extractItems<Device>(deviceData))
+            setGuestUsers(extractItems<GuestUser>(guestData))
+            setThirdPartyApps(extractItems<ThirdPartyApp>(appsData))
+            setBackupJobs(extractItems<BackupJob>(backupData))
+            setAuditLogs(extractItems<AuditLog>(auditData))
+            setHighRiskOps(extractItems<HighRiskOperation>(highRiskData))
 
             // Set department data
             if (deptAnalytics) {
-                setDepartmentMFAData(deptAnalytics.mfa_by_department || [])
-                setDepartmentDeviceData(deptAnalytics.devices_by_department || [])
+                const analytics = deptAnalytics as { mfa_by_department?: DepartmentMetric[]; devices_by_department?: DepartmentMetric[] }
+                setDepartmentMFAData(analytics.mfa_by_department || [])
+                setDepartmentDeviceData(analytics.devices_by_department || [])
             }
 
         } catch (e) {
@@ -118,11 +123,11 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [tenantId])
 
     useEffect(() => {
         fetchData()
-    }, [tenantId])
+    }, [fetchData])
 
     const isDemo = tenantId === 'demo'
     const offboardingData = isDemo ? mockOffboardedUsers : []

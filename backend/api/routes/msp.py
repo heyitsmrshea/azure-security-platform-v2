@@ -47,6 +47,17 @@ class MSPOverview(BaseModel):
     generated_at: datetime
 
 
+from models.schemas import (
+    Tenant, 
+    SecurityScore,
+    ComplianceScore,
+    AlertSummary,
+    RiskSummary
+)
+from services.tenant_manager import TenantManager
+from services.live_data_service import get_live_data_service
+
+
 class CrossTenantAlert(BaseModel):
     """Alert that appears across multiple tenants"""
     alert_id: str
@@ -187,8 +198,8 @@ async def get_msp_overview():
 @router.get("/tenants")
 async def list_tenants(
     status: Optional[str] = None,
-    sort_by: str = Query(default="security_score", regex="^(security_score|compliance_score|name|status)$"),
-    sort_order: str = Query(default="asc", regex="^(asc|desc)$"),
+    sort_by: str = Query(default="security_score", pattern="^(security_score|compliance_score|name|status)$"),
+    sort_order: str = Query(default="asc", pattern="^(asc|desc)$"),
 ):
     """
     List all managed tenants with optional filtering and sorting.

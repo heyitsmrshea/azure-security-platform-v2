@@ -16,6 +16,7 @@ interface TenantSwitcherProps {
     currentTenant: Tenant
     tenants: Tenant[]
     onSwitch: (tenantId: string) => void
+    isLoading?: boolean
     className?: string
 }
 
@@ -23,6 +24,7 @@ export function TenantSwitcher({
     currentTenant,
     tenants,
     onSwitch,
+    isLoading = false,
     className,
 }: TenantSwitcherProps) {
     const [isOpen, setIsOpen] = useState(false)
@@ -72,20 +74,32 @@ export function TenantSwitcher({
         <div ref={dropdownRef} className={cn('relative', className)}>
             {/* Trigger Button */}
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => !isLoading && setIsOpen(!isOpen)}
+                disabled={isLoading}
                 className={cn(
                     'flex items-center gap-3 px-4 py-2 rounded-lg transition-colors',
                     'bg-background-tertiary hover:bg-divider',
-                    isOpen && 'bg-divider'
+                    isOpen && 'bg-divider',
+                    isLoading && 'opacity-70 cursor-wait'
                 )}
             >
-                <div className={cn('w-2 h-2 rounded-full', getStatusColor(currentTenant.status))} />
-                <span className="text-sm font-medium text-foreground-primary max-w-[150px] truncate">
-                    {currentTenant.name}
-                </span>
+                {isLoading ? (
+                    <>
+                        <div className="w-2 h-2 rounded-full bg-foreground-muted animate-pulse" />
+                        <div className="w-32 h-4 bg-foreground-muted/20 rounded animate-pulse" />
+                    </>
+                ) : (
+                    <>
+                        <div className={cn('w-2 h-2 rounded-full', getStatusColor(currentTenant.status))} />
+                        <span className="text-sm font-medium text-foreground-primary max-w-[150px] truncate">
+                            {currentTenant.name}
+                        </span>
+                    </>
+                )}
                 <ChevronDown className={cn(
                     'w-4 h-4 text-foreground-muted transition-transform',
-                    isOpen && 'rotate-180'
+                    isOpen && 'rotate-180',
+                    isLoading && 'opacity-0'
                 )} />
             </button>
 
@@ -149,14 +163,26 @@ export function TenantSwitcher({
                         )}
                     </div>
 
-                    {/* Footer */}
-                    {tenants.length > 5 && (
-                        <div className="px-4 py-2 border-t border-divider bg-background-tertiary/50">
-                            <p className="text-xs text-foreground-muted text-center">
+                    {/* Footer - Manual Entry */}
+                    <div className="px-4 py-3 border-t border-divider bg-background-tertiary/50">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="Enter Tenant ID..."
+                                className="flex-1 px-3 py-1.5 text-xs bg-background-primary border border-divider rounded text-foreground-primary placeholder:text-foreground-muted focus:outline-none focus:border-accent"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSelect(e.currentTarget.value)
+                                    }
+                                }}
+                            />
+                        </div>
+                        {tenants.length > 5 && (
+                            <p className="mt-2 text-[10px] text-foreground-muted text-center">
                                 {tenants.length} tenants available
                             </p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             )}
         </div>

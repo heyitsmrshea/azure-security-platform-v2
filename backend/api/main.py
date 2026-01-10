@@ -7,16 +7,20 @@ import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()  # This loads .env from current directory
+
 import structlog
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
-import httpx
 
 from .routes import executive, it_staff, tenants, reports, auth, msp, compliance
-from ..services.cache_service import CacheService
-from ..services.cosmos_service import CosmosService
+from .dependencies import get_current_user, validate_token
+from services.cache_service import CacheService
+from services.cosmos_service import CosmosService
+from services.scheduler import scheduler_service, historical_snapshot_scheduler
+from services.live_data_service import get_live_data_service
 
 # Configure structured logging
 structlog.configure(
@@ -52,8 +56,10 @@ class Settings:
     COSMOS_KEY: str = os.getenv("COSMOS_KEY", "")
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
     
-    # CORS
-    CORS_ORIGINS: list = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    # CORS - supports comma-separated list in env var
+    # Default includes common local development ports
+    _default_origins = "http://localhost:3000,http://localhost:3001,http://localhost:8080"
+    CORS_ORIGINS: list = [o.strip() for o in os.getenv("CORS_ORIGINS", _default_origins).split(",") if o.strip()]
     
     # JWT Validation
     JWKS_URL: str = f"https://login.microsoftonline.com/{AZURE_AD_TENANT_ID}/discovery/v2.0/keys"
@@ -93,10 +99,31 @@ async def lifespan(app: FastAPI):
         await cosmos_service.initialize()
         logger.info("cosmos_initialized")
     
+    # Start the scheduler service
+    scheduler_service.start()
+    logger.info("scheduler_service_started")
+    
+    # Set up daily snapshots if Graph API is configured
+    try:
+        live_service = get_live_data_service()
+        if live_service.is_connected():
+            # For production, you'd loop through configured tenants
+            # For now, set up for the primary tenant
+            tenant_id = settings.AZURE_AD_TENANT_ID
+            if tenant_id:
+                historical_snapshot_scheduler.setup_daily_snapshots(tenant_id, live_service)
+                logger.info("historical_snapshots_configured", tenant_id=tenant_id)
+    except Exception as e:
+        logger.warning("scheduler_setup_failed", error=str(e))
+    
     yield
     
     # Shutdown
     logger.info("application_shutting_down")
+    
+    # Shutdown scheduler
+    scheduler_service.shutdown(wait=True)
+    logger.info("scheduler_service_stopped")
     
     if cache_service:
         await cache_service.disconnect()
@@ -127,88 +154,6 @@ app.add_middleware(
 
 
 # ============================================================================
-# Azure AD Authentication
-# ============================================================================
-
-security = HTTPBearer()
-_jwks_cache: Optional[dict] = None
-
-
-async def get_jwks() -> dict:
-    """Fetch and cache JWKS from Azure AD."""
-    global _jwks_cache
-    
-    if _jwks_cache:
-        return _jwks_cache
-    
-    async with httpx.AsyncClient() as client:
-        response = await client.get(settings.JWKS_URL)
-        response.raise_for_status()
-        _jwks_cache = response.json()
-        return _jwks_cache
-
-
-async def validate_token(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> dict:
-    """
-    Validate Azure AD JWT token.
-    
-    Returns:
-        Decoded token payload with user claims
-    """
-    token = credentials.credentials
-    
-    try:
-        # Get JWKS
-        jwks = await get_jwks()
-        
-        # Get token header to find key ID
-        unverified_header = jwt.get_unverified_header(token)
-        
-        # Find matching key
-        rsa_key = None
-        for key in jwks.get("keys", []):
-            if key.get("kid") == unverified_header.get("kid"):
-                rsa_key = {
-                    "kty": key["kty"],
-                    "kid": key["kid"],
-                    "use": key["use"],
-                    "n": key["n"],
-                    "e": key["e"],
-                }
-                break
-        
-        if not rsa_key:
-            raise HTTPException(status_code=401, detail="Unable to find key")
-        
-        # Validate token
-        payload = jwt.decode(
-            token,
-            rsa_key,
-            algorithms=["RS256"],
-            audience=settings.AUDIENCE,
-            issuer=settings.ISSUER,
-        )
-        
-        return payload
-        
-    except JWTError as e:
-        logger.warning("token_validation_failed", error=str(e))
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-def get_current_user(token: dict = Depends(validate_token)) -> dict:
-    """Extract user info from validated token."""
-    return {
-        "user_id": token.get("oid"),
-        "email": token.get("preferred_username") or token.get("upn"),
-        "name": token.get("name"),
-        "roles": token.get("roles", []),
-    }
-
-
-# ============================================================================
 # Dependency Injection
 # ============================================================================
 
@@ -232,8 +177,12 @@ def get_cosmos_service() -> CosmosService:
 
 # Public routes (no auth required for health check)
 @app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
+    from services.live_data_service import get_live_data_service
+    from services.storage_service import get_storage_service
+    
     health = {
         "status": "healthy",
         "version": "2.0.0",
@@ -251,6 +200,26 @@ async def health_check():
         health["services"]["cosmos"] = {"status": "connected"}
     else:
         health["services"]["cosmos"] = {"status": "not_configured"}
+    
+    # Check Graph API connection
+    try:
+        live_service = get_live_data_service()
+        health["services"]["graph_api"] = {
+            "status": "connected" if live_service.is_connected() else "not_configured"
+        }
+    except Exception as e:
+        health["services"]["graph_api"] = {"status": "error", "error": str(e)}
+    
+    # Check Storage Service
+    try:
+        storage = get_storage_service()
+        storage_type = type(storage).__name__
+        health["services"]["storage"] = {
+            "status": "available",
+            "type": storage_type,
+        }
+    except Exception as e:
+        health["services"]["storage"] = {"status": "error", "error": str(e)}
     
     return health
 

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Shield, RefreshCw, Download, ChevronDown, Clock, Eye, EyeOff } from 'lucide-react'
+import { Shield, RefreshCw, Download, Clock, Eye, EyeOff } from 'lucide-react'
 import { ExportModal } from './ExportModal'
 import { TenantSwitcher } from './TenantSwitcher'
 import { useViewMode } from '@/hooks/useViewMode'
@@ -20,20 +20,51 @@ interface DashboardHeaderProps {
   className?: string
 }
 
+interface Tenant {
+  id: string
+  name: string
+  securityScore?: number
+  status?: 'healthy' | 'warning' | 'critical'
+}
+
 export function DashboardHeader({
   tenantName,
   tenantId = 'demo',
   title,
-  lastUpdated,
+  lastUpdated: _lastUpdated,
   minutesAgo,
   onRefresh,
   isRefreshing,
   className,
 }: DashboardHeaderProps) {
+  void _lastUpdated // Available for future display enhancement
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const { isSimplified, toggleViewMode } = useViewMode()
   const router = useRouter()
-  const pathname = usePathname()
+  const _pathname = usePathname()
+  void _pathname // Available for route-based logic
+  const [tenants, setTenants] = useState<Tenant[]>([])
+  const [isLoadingTenants, setIsLoadingTenants] = useState(true)
+
+  useEffect(() => {
+    const fetchTenants = async () => {
+      try {
+        const { apiClient } = await import('@/lib/api-client')
+        const data = await apiClient.listTenants()
+        if (Array.isArray(data)) {
+          setTenants(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch tenants:', error)
+        // Fallback to demo if fetch fails
+        setTenants([{ id: 'demo', name: 'Demo Organization', securityScore: 72.5, status: 'warning' }])
+      } finally {
+        setIsLoadingTenants(false)
+      }
+    }
+    fetchTenants()
+  }, [])
+
 
   const getFreshnessStatus = () => {
     if (!minutesAgo) return 'unknown'
@@ -71,16 +102,12 @@ export function DashboardHeader({
                 </div>
               </div>
 
-              {/* Tenant Switcher */}
+              {/* TenantSwitcher */}
               <TenantSwitcher
                 currentTenant={{ id: tenantId, name: tenantName, status: 'healthy' }}
-                tenants={[
-                  { id: 'demo', name: 'Demo Organization', securityScore: 72.5, status: 'warning' },
-                  { id: 'acme-corp', name: 'Acme Corporation', securityScore: 85.2, status: 'healthy' },
-                  { id: 'globex', name: 'Globex Industries', securityScore: 58.1, status: 'critical' },
-                  { id: 'initech', name: 'Initech Solutions', securityScore: 91.0, status: 'healthy' },
-                ]}
-                onSwitch={(id) => router.push(`/${id}/executive`)}
+                tenants={tenants}
+                onSwitch={(id) => router.push(`/${id}/${dashboardType}`)}
+                isLoading={isLoadingTenants}
               />
             </div>
 

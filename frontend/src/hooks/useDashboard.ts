@@ -14,6 +14,7 @@ const createMockDashboard = (tenantId: string): ExecutiveDashboard => {
     security_score: {
       current_score: 72.5,
       max_score: 100,
+      score_percent: 72.5,
       percentile: 65,
       trend: { direction: 'up', change_value: 3.2, change_percent: 4.6, period: '7d' },
       comparison_label: 'Top 35%',

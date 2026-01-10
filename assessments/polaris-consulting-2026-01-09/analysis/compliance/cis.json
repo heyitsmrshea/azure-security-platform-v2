@@ -1,0 +1,343 @@
+{
+  "framework": {
+    "id": "cis",
+    "name": "CIS Microsoft Azure Foundations Benchmark",
+    "version": "2.0.0"
+  },
+  "score": 93.1,
+  "controls": {
+    "total": 54,
+    "passed": 53,
+    "failed": 1
+  },
+  "failed_controls": [
+    "5.1.4"
+  ],
+  "control_status": [
+    {
+      "id": "1.1",
+      "name": "Ensure Security Defaults is enabled on Microsoft Entra ID",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.1.1",
+      "name": "Ensure Multi-factor Authentication is Required for All Users",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.1.2",
+      "name": "Ensure Multi-factor Authentication is Required for Administrative Roles",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.2",
+      "name": "Ensure Trusted Locations Are Defined",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.3",
+      "name": "Ensure Guest Users Are Reviewed on a Regular Basis",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.4",
+      "name": "Ensure Access Reviews Are Configured for Guest Users",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.5",
+      "name": "Ensure Self-Service Password Reset Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.6",
+      "name": "Ensure Custom Banned Password List is Set",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.7",
+      "name": "Ensure Privileged Identity Management Is Used to Manage Roles",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "1.8",
+      "name": "Ensure Global Administrator Count Is Minimized",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1",
+      "name": "Ensure Microsoft Defender for Cloud Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1.1",
+      "name": "Ensure Microsoft Defender for Servers Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1.2",
+      "name": "Ensure Microsoft Defender for App Service Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1.3",
+      "name": "Ensure Microsoft Defender for SQL Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1.4",
+      "name": "Ensure Microsoft Defender for Storage Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.1.5",
+      "name": "Ensure Microsoft Defender for Key Vault Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.2",
+      "name": "Ensure Security Contact Email Is Set",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "2.3",
+      "name": "Ensure Automatic Provisioning of Monitoring Agent Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.1",
+      "name": "Ensure Secure Transfer Required Is Set to Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.2",
+      "name": "Ensure Storage Account Default Network Access Is Set to Deny",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.3",
+      "name": "Ensure Private Endpoints Are Used to Access Storage Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.4",
+      "name": "Ensure Storage Logging Is Enabled for Blob Service",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.5",
+      "name": "Ensure Public Access Level Is Disabled for Storage Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.6",
+      "name": "Ensure Minimum TLS Version Is Set to 1.2",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "3.7",
+      "name": "Ensure Soft Delete Is Enabled for Blobs and Containers",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "4.1",
+      "name": "Ensure Auditing Is Set to On for SQL Servers",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "4.2",
+      "name": "Ensure Advanced Threat Protection Is Set to On",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "4.3",
+      "name": "Ensure SQL Server TDE Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "4.4",
+      "name": "Ensure SQL Server Firewall Rules Are Configured",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "4.5",
+      "name": "Ensure SQL Server Uses Private Endpoints",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.1",
+      "name": "Ensure Diagnostic Logs Are Enabled for All Services",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.2",
+      "name": "Ensure Activity Log Retention Is Set to 365 Days or More",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.3",
+      "name": "Ensure Log Analytics Workspace Is Configured",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.4",
+      "name": "Ensure Network Security Group Flow Logs Are Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "5.5",
+      "name": "Ensure Security Alert Notifications Are Configured",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.1",
+      "name": "Ensure No Network Security Groups Allow Inbound from 0.0.0.0/0 to Port 22",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.2",
+      "name": "Ensure No Network Security Groups Allow Inbound from 0.0.0.0/0 to Port 3389",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.3",
+      "name": "Ensure Network Security Groups Are Associated with Subnets",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.4",
+      "name": "Ensure DDoS Protection Standard Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.5",
+      "name": "Ensure Web Application Firewall Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "6.6",
+      "name": "Ensure Azure Bastion Is Used for Remote Access",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.1",
+      "name": "Ensure Virtual Machines Use Managed Disks",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.2",
+      "name": "Ensure VM Disk Encryption Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.3",
+      "name": "Ensure VMs Do Not Have Public IP Addresses",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "7.4",
+      "name": "Ensure Automatic OS Updates Are Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.1",
+      "name": "Ensure Key Vault Is Recoverable",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.2",
+      "name": "Ensure Private Endpoints Are Used for Key Vault",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.3",
+      "name": "Ensure Key Vault Logging Is Enabled",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.4",
+      "name": "Ensure Key Expiration Is Set for Keys",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "8.5",
+      "name": "Ensure Secret Expiration Is Set for Secrets",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "9.1",
+      "name": "Ensure App Service Uses Latest TLS Version",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "9.2",
+      "name": "Ensure App Service Requires HTTPS Only",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "9.3",
+      "name": "Ensure App Service Uses Managed Identity",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "9.4",
+      "name": "Ensure App Service Uses VNet Integration",
+      "status": "pass",
+      "findings": []
+    }
+  ],
+  "findings_mapped": 1
+}

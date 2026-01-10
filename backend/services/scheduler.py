@@ -343,3 +343,72 @@ class DataCollectionScheduler:
 # Global scheduler instance
 scheduler_service = SchedulerService()
 data_collection_scheduler = DataCollectionScheduler(scheduler_service)
+
+
+class HistoricalSnapshotScheduler:
+    """
+    Schedules daily historical snapshot jobs for trending data.
+    """
+    
+    def __init__(self, scheduler: SchedulerService):
+        self._scheduler = scheduler
+        self._tenant_jobs = {}
+    
+    def setup_daily_snapshots(self, tenant_id: str, live_data_service):
+        """
+        Set up daily snapshot job for a tenant.
+        
+        Runs at 1 AM UTC to capture daily metrics for historical trending.
+        """
+        async def capture_daily_snapshot():
+            """Capture and store daily dashboard snapshot."""
+            from services.storage_service import get_storage_service
+            
+            try:
+                storage = get_storage_service()
+                
+                # Fetch current data
+                data = await live_data_service.get_full_dashboard_data()
+                
+                # Extract key metrics
+                snapshot_data = {
+                    "security_score": data.get("secure_score", {}).get("current_score", 0),
+                    "mfa_coverage": data.get("mfa_coverage", {}).get("user_coverage_percent", 0),
+                    "device_compliance": data.get("device_compliance", {}).get("compliance_percent", 0),
+                    "risky_users": data.get("risky_users", {}).get("total_risky", 0),
+                    "active_alerts": data.get("security_alerts", {}).get("active_alerts", 0),
+                    "global_admins": data.get("privileged_accounts", {}).get("global_admin_count", 0),
+                }
+                
+                await storage.save_dashboard_snapshot(tenant_id, "executive", snapshot_data)
+                await storage.save_security_score(tenant_id, {
+                    "current_score": snapshot_data["security_score"],
+                    "max_score": 100,
+                })
+                
+                logger.info("daily_snapshot_captured", tenant_id=tenant_id)
+                
+            except Exception as e:
+                logger.error("daily_snapshot_failed", tenant_id=tenant_id, error=str(e))
+        
+        job_id = self._scheduler.add_job(
+            f"{tenant_id}_daily_snapshot",
+            capture_daily_snapshot,
+            'cron',
+            hour=1,  # 1 AM UTC
+            minute=0,
+        )
+        
+        self._tenant_jobs[tenant_id] = job_id
+        logger.info("daily_snapshot_scheduled", tenant_id=tenant_id)
+        return job_id
+    
+    def remove_tenant_snapshots(self, tenant_id: str):
+        """Remove daily snapshot job for a tenant."""
+        job_id = self._tenant_jobs.pop(tenant_id, None)
+        if job_id:
+            self._scheduler.remove_job(job_id)
+            logger.info("daily_snapshot_removed", tenant_id=tenant_id)
+
+
+historical_snapshot_scheduler = HistoricalSnapshotScheduler(scheduler_service)

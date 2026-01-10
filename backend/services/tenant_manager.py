@@ -10,7 +10,7 @@ import structlog
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
-from ..models.schemas import Tenant, TenantCreate
+from models.schemas import Tenant, TenantCreate
 
 logger = structlog.get_logger(__name__)
 

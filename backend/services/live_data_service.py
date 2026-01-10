@@ -9,6 +9,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 import structlog
 
+# Load environment variables from .env file (must be before reading any env vars)
+from dotenv import load_dotenv
+load_dotenv()
+
 from .graph_client import GraphClient
 
 logger = structlog.get_logger(__name__)
@@ -93,7 +97,7 @@ class LiveDataService:
             }
     
     async def get_secure_score(self) -> dict:
-        """Get Microsoft Secure Score."""
+        """Get Microsoft Secure Score with industry comparisons."""
         if not self._graph_client:
             return self._mock_secure_score()
         
@@ -102,24 +106,87 @@ class LiveDataService:
             current = data.get("current_score", 0)
             max_score = data.get("max_score", 100)
             
+            # Calculate percentage (0-100 scale)
+            score_percent = round((current / max_score) * 100, 1) if max_score > 0 else 0
+            
+            # Process comparison data from Microsoft
+            comparisons = data.get("comparisons", [])
+            benchmark_data = {
+                "your_score_percent": score_percent,
+                "all_tenants": None,
+                "similar_size": None,
+                "industry": None,
+                "organization_size": data.get("licensed_user_count"),
+            }
+            
+            for comp in comparisons:
+                basis = comp.get("basis", "").lower()
+                avg = comp.get("average_score", 0)
+                avg_percent = round((avg / max_score) * 100, 1) if max_score > 0 else 0
+                
+                if "alltenants" in basis or basis == "all":
+                    benchmark_data["all_tenants"] = {
+                        "average_score": avg,
+                        "average_percent": avg_percent,
+                        "comparison": "above" if current > avg else "below" if current < avg else "equal",
+                        "difference": round(score_percent - avg_percent, 1),
+                    }
+                elif "seat" in basis or "size" in basis:
+                    benchmark_data["similar_size"] = {
+                        "average_score": avg,
+                        "average_percent": avg_percent,
+                        "comparison": "above" if current > avg else "below" if current < avg else "equal",
+                        "difference": round(score_percent - avg_percent, 1),
+                        "size_category": self._get_size_category(data.get("licensed_user_count", 0)),
+                    }
+                elif "industry" in basis:
+                    benchmark_data["industry"] = {
+                        "average_score": avg,
+                        "average_percent": avg_percent,
+                        "comparison": "above" if current > avg else "below" if current < avg else "equal",
+                        "difference": round(score_percent - avg_percent, 1),
+                    }
+            
             return {
                 "current_score": current,
                 "max_score": max_score,
-                "percentile": int((current / max_score) * 100) if max_score > 0 else 0,
+                "score_percent": score_percent,
+                "percentile": 0,
                 "controls": data.get("control_scores", []),
+                "benchmarks": benchmark_data,
                 "is_live": True,
             }
         except Exception as e:
             logger.error("secure_score_fetch_failed", error=str(e))
             return self._mock_secure_score()
     
+    def _get_size_category(self, user_count: int) -> str:
+        """Categorize organization size based on user count."""
+        if user_count == 0:
+            return "Unknown"
+        elif user_count <= 50:
+            return "Small (1-50)"
+        elif user_count <= 250:
+            return "Medium (51-250)"
+        elif user_count <= 1000:
+            return "Large (251-1000)"
+        else:
+            return "Enterprise (1000+)"
+    
     def _mock_secure_score(self) -> dict:
         """Return mock data when live data unavailable."""
         return {
             "current_score": 0,
             "max_score": 100,
+            "score_percent": 0,
             "percentile": 0,
             "controls": [],
+            "benchmarks": {
+                "your_score_percent": 0,
+                "all_tenants": None,
+                "similar_size": None,
+                "industry": None,
+            },
             "is_live": False,
             "error": "Unable to fetch live data",
         }
@@ -321,13 +388,34 @@ class LiveDataService:
         try:
             alerts = await self._graph_client.get_security_alerts()
             
-            critical = len([a for a in alerts if a.get("severity", "").lower() == "high"])
-            high = len([a for a in alerts if a.get("severity", "").lower() == "medium"])
-            medium = len([a for a in alerts if a.get("severity", "").lower() == "low"])
-            low = len([a for a in alerts if a.get("severity", "").lower() == "informational"])
+            # Helper to normalize severity string (handles enum-like strings)
+            def normalize_severity(sev: str) -> str:
+                sev_lower = sev.lower()
+                # Handle both plain strings and enum-like strings (e.g., "AlertSeverity.High")
+                if "critical" in sev_lower:
+                    return "critical"
+                elif "high" in sev_lower:
+                    return "high"
+                elif "medium" in sev_lower:
+                    return "medium"
+                elif "low" in sev_lower:
+                    return "low"
+                else:
+                    return "informational"
             
-            # Filter active alerts
-            active_alerts = [a for a in alerts if a.get("status", "").lower() not in ["resolved", "dismissed"]]
+            # Count by severity
+            critical = len([a for a in alerts if normalize_severity(a.get("severity", "")) == "critical"])
+            high = len([a for a in alerts if normalize_severity(a.get("severity", "")) == "high"])
+            medium = len([a for a in alerts if normalize_severity(a.get("severity", "")) == "medium"])
+            low = len([a for a in alerts if normalize_severity(a.get("severity", "")) == "low"])
+            informational = len([a for a in alerts if normalize_severity(a.get("severity", "")) == "informational"])
+            
+            # Filter active alerts (not resolved or dismissed)
+            def is_active(status: str) -> bool:
+                status_lower = status.lower()
+                return "resolved" not in status_lower and "dismissed" not in status_lower
+            
+            active_alerts = [a for a in alerts if is_active(a.get("status", "active"))]
             
             return {
                 "total_alerts": len(alerts),
@@ -335,7 +423,7 @@ class LiveDataService:
                 "critical_count": critical,
                 "high_count": high,
                 "medium_count": medium,
-                "low_count": low,
+                "low_count": low + informational,  # Combine low and informational
                 "alerts": alerts[:20],  # Recent alerts
                 "is_live": True,
             }
@@ -501,7 +589,8 @@ class LiveDataService:
         """
         Get all dashboard data in one call.
         
-        Returns comprehensive security posture data.
+        Returns comprehensive security posture data with permission status flags
+        to indicate which data sources are available.
         """
         import asyncio
         
@@ -521,12 +610,48 @@ class LiveDataService:
         # Unpack results
         secure_score, mfa, risky_users, priv_accounts, ca_policies, devices, alerts, users = results
         
-        # Handle any exceptions
-        def safe_get(result, default):
+        # Track permission status for each API
+        permission_status = {
+            "secure_score": False,
+            "mfa_registration": False,
+            "identity_protection": False,
+            "directory_roles": False,
+            "conditional_access": False,
+            "intune_devices": False,
+            "security_alerts": False,
+            "users": False,
+        }
+        
+        # Handle any exceptions and track permission status
+        def safe_get(result, default, permission_key: str):
             if isinstance(result, Exception):
-                logger.error("dashboard_data_error", error=str(result))
+                error_str = str(result).lower()
+                # Log specific permission errors
+                if "authorization" in error_str or "forbidden" in error_str or "403" in error_str:
+                    logger.warning("permission_denied", permission=permission_key, error=str(result))
+                else:
+                    logger.error("dashboard_data_error", permission=permission_key, error=str(result))
                 return default
+            
+            # Check if result indicates live data
+            if isinstance(result, dict) and result.get("is_live"):
+                permission_status[permission_key] = True
+            
             return result
+        
+        # Process results with permission tracking
+        secure_score_data = safe_get(secure_score, self._mock_secure_score(), "secure_score")
+        mfa_data = safe_get(mfa, self._mock_mfa_coverage(), "mfa_registration")
+        risky_users_data = safe_get(risky_users, self._mock_risky_users(), "identity_protection")
+        priv_accounts_data = safe_get(priv_accounts, self._mock_privileged_accounts(), "directory_roles")
+        ca_policies_data = safe_get(ca_policies, self._mock_ca_policies(), "conditional_access")
+        devices_data = safe_get(devices, self._mock_device_compliance(), "intune_devices")
+        alerts_data = safe_get(alerts, self._mock_security_alerts(), "security_alerts")
+        users_data = safe_get(users, {"total_users": 0, "guest_users": 0, "is_live": False}, "users")
+        
+        # Update users permission status
+        if isinstance(users_data, dict) and users_data.get("is_live"):
+            permission_status["users"] = True
         
         return {
             "tenant_id": self.tenant_id,
@@ -534,14 +659,26 @@ class LiveDataService:
             "is_live_data": self.is_connected(),
             "last_updated": datetime.utcnow().isoformat(),
             
-            "secure_score": safe_get(secure_score, self._mock_secure_score()),
-            "mfa_coverage": safe_get(mfa, self._mock_mfa_coverage()),
-            "risky_users": safe_get(risky_users, self._mock_risky_users()),
-            "privileged_accounts": safe_get(priv_accounts, self._mock_privileged_accounts()),
-            "conditional_access": safe_get(ca_policies, self._mock_ca_policies()),
-            "device_compliance": safe_get(devices, self._mock_device_compliance()),
-            "security_alerts": safe_get(alerts, self._mock_security_alerts()),
-            "users_summary": safe_get(users, {"total_users": 0, "guest_users": 0, "is_live": False}),
+            "secure_score": secure_score_data,
+            "mfa_coverage": mfa_data,
+            "risky_users": risky_users_data,
+            "privileged_accounts": priv_accounts_data,
+            "conditional_access": ca_policies_data,
+            "device_compliance": devices_data,
+            "security_alerts": alerts_data,
+            "users_summary": users_data,
+            
+            # Permission status indicates which APIs are accessible
+            "permission_status": permission_status,
+            
+            # Summary of configuration status
+            "configuration_status": {
+                "graph_connected": self.is_connected(),
+                "has_secure_score": permission_status["secure_score"],
+                "has_identity_data": permission_status["mfa_registration"] or permission_status["identity_protection"],
+                "has_device_data": permission_status["intune_devices"],
+                "has_alert_data": permission_status["security_alerts"],
+            },
         }
     async def get_department_analytics(self) -> dict:
         """

@@ -1,0 +1,29 @@
+# Render Blueprint - Backend API
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: azure-security-api
+    env: python
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      # Azure credentials - set these in Render dashboard
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+      - key: AZURE_TENANT_ID
+        sync: false
+      # Optional services
+      - key: REDIS_URL
+        sync: false
+      - key: COSMOS_ENDPOINT
+        sync: false
+      - key: COSMOS_KEY
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true

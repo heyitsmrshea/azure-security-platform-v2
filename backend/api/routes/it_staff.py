@@ -16,7 +16,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 import structlog
 
-from ...models.schemas import (
+from models.schemas import (
     SecurityAlert,
     Vulnerability,
     MFAGap,
@@ -31,7 +31,8 @@ from ...models.schemas import (
     Severity,
     PaginatedResponse,
 )
-from ...services.live_data_service import get_live_data_service
+from services.live_data_service import get_live_data_service
+from services.azure_client import get_azure_client
 
 router = APIRouter()
 logger = structlog.get_logger(__name__)
@@ -1102,10 +1103,19 @@ async def get_department_analytics(tenant_id: str):
     Get departmental breakdowns of security metrics.
     """
     if not is_real_tenant(tenant_id):
-        # Return empty lists for demo tenants (client will handle fallback to mock data if needed)
+        # Return mock data for demo tenants so the UI isn't empty
         return {
-            "mfa_by_department": [],
-            "devices_by_department": [],
+            "mfa_by_department": [
+                {"department": "Engineering", "total": 45, "compliant": 42, "nonCompliant": 3, "percentage": 93.3},
+                {"department": "Sales", "total": 30, "compliant": 18, "nonCompliant": 12, "percentage": 60.0},
+                {"department": "Marketing", "total": 22, "compliant": 20, "nonCompliant": 2, "percentage": 90.9},
+                {"department": "HR", "total": 15, "compliant": 14, "nonCompliant": 1, "percentage": 93.3},
+            ],
+            "devices_by_department": [
+                {"department": "Engineering", "total": 45, "compliant": 44, "nonCompliant": 1, "percentage": 97.8},
+                {"department": "Sales", "total": 30, "compliant": 25, "nonCompliant": 5, "percentage": 83.3},
+                {"department": "Marketing", "total": 22, "compliant": 15, "nonCompliant": 7, "percentage": 68.2},
+            ],
             "timestamp": datetime.utcnow().isoformat()
         }
         

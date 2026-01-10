@@ -1,0 +1,50 @@
+{
+  "assessment_id": "4e855a40-7ce8-4fb7-9df1-ab566835aed8",
+  "version": "2.0.0",
+  "customer": {
+    "name": "Polaris Consulting",
+    "tenant_id": "cf47a479-9ed1-452d-896a-0e362307e969",
+    "primary_domain": "cf47a479...onmicrosoft.com"
+  },
+  "assessment": {
+    "date": "2026-01-10T02:53:46.203501",
+    "duration_seconds": 3,
+    "assessor": "Polaris Consulting",
+    "type": "point_in_time",
+    "frameworks": [
+      "cis",
+      "nist",
+      "soc2",
+      "iso27001"
+    ]
+  },
+  "scores": {
+    "overall_grade": "D",
+    "overall_score": 45.0,
+    "secure_score": 50,
+    "categories": {
+      "identity": 50.0,
+      "data_protection": 60,
+      "backup": 0,
+      "devices": 50,
+      "network": 70
+    },
+    "compliance": {
+      "cis": 93.1,
+      "nist": 91.7,
+      "soc2": 92.8,
+      "iso27001": 93.9
+    }
+  },
+  "findings": {
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "informational": 0
+  },
+  "branding": {
+    "company": "Polaris Consulting",
+    "logo": "/Users/andrewshea/Desktop/CURSOR/azure_security_platform_v2/brands/polaris/logo.png"
+  }
+}

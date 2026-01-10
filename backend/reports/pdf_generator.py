@@ -2,9 +2,11 @@
 PDF Report Generator for Azure Security Platform V2
 
 Generates executive and compliance PDF reports using ReportLab.
+Supports white-label branding for partner reports.
 """
 import io
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 import structlog
 
@@ -15,14 +17,15 @@ from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, Image, HRFlowable
+    PageBreak, Image, HRFlowable, ListFlowable, ListItem
 )
 from reportlab.graphics.shapes import Drawing, Rect, String
 from reportlab.graphics.charts.lineplots import LinePlot
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.widgets.markers import makeMarker
 
-from ..models.schemas import ExecutiveDashboard
+from models.schemas import ExecutiveDashboard
+from reports.branding import BrandingConfig, get_default_brand
 
 logger = structlog.get_logger(__name__)
 
@@ -50,14 +53,18 @@ class PDFReportGenerator:
     
     Report Types:
     - Executive Summary: High-level metrics for board/executives
+    - Technical Findings: Detailed findings for IT staff
     - Compliance Report: Framework compliance details
-    - Vulnerability Report: Current vulnerabilities
-    - Audit Report: Administrative actions
+    - Comparison Report: Before/after assessment comparison
+    
+    Supports white-label branding for partner reports.
     """
     
-    def __init__(self):
+    def __init__(self, brand_config: Optional[BrandingConfig] = None):
+        self.brand = brand_config or get_default_brand()
         self.styles = getSampleStyleSheet()
         self._setup_custom_styles()
+        self._setup_brand_colors()
         
     def _setup_custom_styles(self):
         """Set up custom paragraph styles."""
@@ -99,14 +106,19 @@ class PDFReportGenerator:
             fontName='Helvetica-Bold',
         ))
         
-        # Body text
-        self.styles.add(ParagraphStyle(
-            name='BodyText',
-            parent=self.styles['Normal'],
-            fontSize=10,
-            textColor=COLORS['primary'],
-            leading=14,
-        ))
+        # Body text - modify existing style
+        if 'BodyText' in self.styles:
+            self.styles['BodyText'].fontSize = 10
+            self.styles['BodyText'].textColor = COLORS['primary']
+            self.styles['BodyText'].leading = 14
+        else:
+            self.styles.add(ParagraphStyle(
+                name='BodyText',
+                parent=self.styles['Normal'],
+                fontSize=10,
+                textColor=COLORS['primary'],
+                leading=14,
+            ))
         
         # Risk item
         self.styles.add(ParagraphStyle(
@@ -117,6 +129,475 @@ class PDFReportGenerator:
             leftIndent=20,
             spaceBefore=5,
         ))
+    
+    def _setup_brand_colors(self):
+        """Apply brand colors to the color palette."""
+        if self.brand:
+            COLORS['primary'] = colors.HexColor(self.brand.colors.primary)
+            COLORS['secondary'] = colors.HexColor(self.brand.colors.secondary)
+            COLORS['accent'] = colors.HexColor(self.brand.colors.accent)
+    
+    # ========================================================================
+    # Assessment Report Methods (for snapshot assessments)
+    # ========================================================================
+    
+    def generate_executive_summary(
+        self,
+        customer_name: str,
+        assessment_date: datetime,
+        scores: dict,
+        findings: list[dict],
+        compliance_results: dict,
+    ) -> bytes:
+        """
+        Generate branded executive summary PDF.
+        
+        Args:
+            customer_name: Customer organization name
+            assessment_date: Date of assessment
+            scores: Score dictionary with overall_grade, overall_score, etc.
+            findings: List of security findings
+            compliance_results: Compliance framework results
+            
+        Returns:
+            PDF file as bytes
+        """
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=letter,
+            rightMargin=0.75*inch,
+            leftMargin=0.75*inch,
+            topMargin=0.75*inch,
+            bottomMargin=0.75*inch,
+        )
+        
+        story = []
+        
+        # Cover page with branding
+        story.extend(self._create_cover_page(
+            title="Security Assessment",
+            subtitle="Executive Summary",
+            customer_name=customer_name,
+            assessment_date=assessment_date,
+        ))
+        
+        story.append(PageBreak())
+        
+        # Overall Grade Section
+        story.append(Paragraph("Security Posture Overview", self.styles['SectionHeader']))
+        story.append(self._create_grade_display(scores))
+        story.append(Spacer(1, 20))
+        
+        # Key Metrics Table
+        story.append(Paragraph("Key Metrics", self.styles['SectionHeader']))
+        story.append(self._create_scores_table(scores))
+        story.append(Spacer(1, 20))
+        
+        # Finding Summary
+        story.append(Paragraph("Finding Summary", self.styles['SectionHeader']))
+        story.append(self._create_finding_summary_table(findings))
+        story.append(Spacer(1, 20))
+        
+        # Compliance Overview
+        story.append(Paragraph("Compliance Overview", self.styles['SectionHeader']))
+        story.append(self._create_compliance_summary_table(compliance_results))
+        story.append(Spacer(1, 20))
+        
+        # Top Risks
+        story.append(PageBreak())
+        story.append(Paragraph("Top Risks", self.styles['SectionHeader']))
+        critical_high = [f for f in findings if f.get('severity') in ['critical', 'high']][:5]
+        for i, finding in enumerate(critical_high, 1):
+            story.extend(self._format_risk_item(i, finding))
+        
+        # Footer with disclaimers
+        story.append(Spacer(1, 30))
+        story.append(HRFlowable(width="100%", thickness=1, color=COLORS['secondary']))
+        story.append(Spacer(1, 10))
+        for disclaimer in self.brand.disclaimers[:2]:
+            story.append(Paragraph(
+                f"<i>{disclaimer}</i>",
+                self.styles['MetricLabel']
+            ))
+        
+        doc.build(story)
+        buffer.seek(0)
+        return buffer.getvalue()
+    
+    def generate_technical_report(
+        self,
+        customer_name: str,
+        assessment_date: datetime,
+        findings: list[dict],
+        raw_data: dict,
+    ) -> bytes:
+        """
+        Generate technical findings report for IT staff.
+        """
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=letter,
+            rightMargin=0.5*inch,
+            leftMargin=0.5*inch,
+            topMargin=0.75*inch,
+            bottomMargin=0.75*inch,
+        )
+        
+        story = []
+        
+        # Cover page
+        story.extend(self._create_cover_page(
+            title="Security Assessment",
+            subtitle="Technical Findings Report",
+            customer_name=customer_name,
+            assessment_date=assessment_date,
+        ))
+        
+        story.append(PageBreak())
+        
+        # Table of Contents
+        story.append(Paragraph("Table of Contents", self.styles['SectionHeader']))
+        story.append(Paragraph("1. Finding Summary", self.styles['BodyText']))
+        story.append(Paragraph("2. Critical Findings", self.styles['BodyText']))
+        story.append(Paragraph("3. High Findings", self.styles['BodyText']))
+        story.append(Paragraph("4. Medium Findings", self.styles['BodyText']))
+        story.append(Paragraph("5. Low Findings", self.styles['BodyText']))
+        story.append(Spacer(1, 20))
+        
+        # Finding Summary
+        story.append(PageBreak())
+        story.append(Paragraph("1. Finding Summary", self.styles['SectionHeader']))
+        story.append(self._create_finding_summary_table(findings))
+        story.append(Spacer(1, 20))
+        
+        # Findings by severity
+        for severity in ['critical', 'high', 'medium', 'low']:
+            severity_findings = [f for f in findings if f.get('severity') == severity]
+            if severity_findings:
+                story.append(PageBreak())
+                story.append(Paragraph(
+                    f"{severity.title()} Findings ({len(severity_findings)})",
+                    self.styles['SectionHeader']
+                ))
+                
+                for i, finding in enumerate(severity_findings, 1):
+                    story.extend(self._format_detailed_finding(finding))
+                    if i < len(severity_findings):
+                        story.append(Spacer(1, 15))
+        
+        # Footer
+        story.append(Spacer(1, 30))
+        story.append(HRFlowable(width="100%", thickness=1, color=COLORS['secondary']))
+        story.append(Paragraph(
+            f"Generated by {self.brand.company_name} | {datetime.utcnow().strftime('%Y-%m-%d')}",
+            self.styles['MetricLabel']
+        ))
+        
+        doc.build(story)
+        buffer.seek(0)
+        return buffer.getvalue()
+    
+    def generate_compliance_report(
+        self,
+        customer_name: str,
+        assessment_date: datetime,
+        compliance_results: dict,
+        findings: list[dict],
+    ) -> bytes:
+        """
+        Generate compliance framework report.
+        """
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=letter,
+            rightMargin=0.5*inch,
+            leftMargin=0.5*inch,
+            topMargin=0.75*inch,
+            bottomMargin=0.75*inch,
+        )
+        
+        story = []
+        
+        # Cover page
+        story.extend(self._create_cover_page(
+            title="Security Assessment",
+            subtitle="Compliance Report",
+            customer_name=customer_name,
+            assessment_date=assessment_date,
+        ))
+        
+        story.append(PageBreak())
+        
+        # Compliance Summary
+        story.append(Paragraph("Compliance Summary", self.styles['SectionHeader']))
+        story.append(self._create_compliance_summary_table(compliance_results))
+        story.append(Spacer(1, 30))
+        
+        # Framework Details
+        for framework_id, result in compliance_results.items():
+            story.append(PageBreak())
+            fw_info = result.get('framework', {})
+            story.append(Paragraph(
+                f"{fw_info.get('name', framework_id)}",
+                self.styles['SectionHeader']
+            ))
+            
+            # Framework score
+            story.append(Paragraph(
+                f"<b>Score: {result.get('score', 0):.1f}%</b> | "
+                f"Passed: {result.get('controls', {}).get('passed', 0)} | "
+                f"Failed: {result.get('controls', {}).get('failed', 0)} | "
+                f"Total: {result.get('controls', {}).get('total', 0)}",
+                self.styles['BodyText']
+            ))
+            story.append(Spacer(1, 15))
+            
+            # Failed controls
+            failed = result.get('failed_controls', [])
+            if failed:
+                story.append(Paragraph("Failed Controls:", self.styles['BodyText']))
+                for ctrl in failed[:10]:  # Limit to 10
+                    story.append(Paragraph(f"• {ctrl}", self.styles['RiskItem']))
+            else:
+                story.append(Paragraph(
+                    "All assessed controls passed.",
+                    self.styles['BodyText']
+                ))
+        
+        # Footer
+        story.append(Spacer(1, 30))
+        story.append(HRFlowable(width="100%", thickness=1, color=COLORS['secondary']))
+        story.append(Paragraph(
+            f"Generated by {self.brand.company_name} | {datetime.utcnow().strftime('%Y-%m-%d')}",
+            self.styles['MetricLabel']
+        ))
+        
+        doc.build(story)
+        buffer.seek(0)
+        return buffer.getvalue()
+    
+    def _create_cover_page(
+        self,
+        title: str,
+        subtitle: str,
+        customer_name: str,
+        assessment_date: datetime,
+    ) -> list:
+        """Create branded cover page elements."""
+        elements = []
+        
+        # Logo (if available)
+        if self.brand.logo_path and Path(self.brand.logo_path).exists():
+            try:
+                logo = Image(self.brand.logo_path, width=2*inch, height=0.75*inch)
+                elements.append(logo)
+                elements.append(Spacer(1, 30))
+            except Exception as e:
+                logger.warning(f"Failed to load logo: {e}")
+        
+        elements.append(Spacer(1, 100))
+        
+        # Title
+        elements.append(Paragraph(title, self.styles['ReportTitle']))
+        elements.append(Paragraph(subtitle, self.styles['Heading2']))
+        elements.append(Spacer(1, 40))
+        
+        # Customer name
+        elements.append(Paragraph(
+            f"<b>Prepared for:</b> {customer_name}",
+            self.styles['BodyText']
+        ))
+        elements.append(Paragraph(
+            f"<b>Assessment Date:</b> {assessment_date.strftime('%B %d, %Y') if assessment_date else 'N/A'}",
+            self.styles['BodyText']
+        ))
+        elements.append(Paragraph(
+            f"<b>Prepared by:</b> {self.brand.company_name}",
+            self.styles['BodyText']
+        ))
+        
+        elements.append(Spacer(1, 100))
+        
+        # Tagline
+        if self.brand.tagline:
+            elements.append(Paragraph(
+                f"<i>{self.brand.tagline}</i>",
+                self.styles['MetricLabel']
+            ))
+        
+        # Contact info
+        if self.brand.contact.website:
+            elements.append(Paragraph(
+                self.brand.contact.website,
+                self.styles['MetricLabel']
+            ))
+        
+        return elements
+    
+    def _create_grade_display(self, scores: dict) -> Table:
+        """Create visual grade display."""
+        grade = scores.get('overall_grade', '?')
+        score = scores.get('overall_score', 0)
+        
+        # Grade description
+        descriptions = {
+            'A': 'Excellent - Industry leading security',
+            'B': 'Good - Above average posture',
+            'C': 'Fair - Meets minimum standards',
+            'D': 'Poor - Significant gaps',
+            'F': 'Critical - Immediate action required',
+        }
+        
+        data = [
+            [f"Grade: {grade}", f"Score: {score}/100"],
+            [descriptions.get(grade, ''), ''],
+        ]
+        
+        table = Table(data, colWidths=[3.5*inch, 3.5*inch])
+        table.setStyle(TableStyle([
+            ('FONTSIZE', (0, 0), (-1, 0), 36),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 1), (-1, 1), 12),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('SPAN', (0, 1), (1, 1)),
+        ]))
+        
+        return table
+    
+    def _create_scores_table(self, scores: dict) -> Table:
+        """Create scores summary table."""
+        categories = scores.get('categories', {})
+        compliance = scores.get('compliance', {})
+        
+        data = [['Category', 'Score']]
+        
+        data.append(['Secure Score', f"{scores.get('secure_score', 0):.1f}%"])
+        
+        for cat, score in categories.items():
+            data.append([cat.replace('_', ' ').title(), f"{score:.1f}%"])
+        
+        table = Table(data, colWidths=[4*inch, 2*inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), COLORS['secondary']),
+            ('TEXTCOLOR', (0, 0), (-1, 0), COLORS['white']),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, COLORS['secondary']),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [COLORS['white'], colors.HexColor('#F8FAFC')]),
+        ]))
+        
+        return table
+    
+    def _create_finding_summary_table(self, findings: list[dict]) -> Table:
+        """Create finding count summary table."""
+        counts = {
+            'Critical': len([f for f in findings if f.get('severity') == 'critical']),
+            'High': len([f for f in findings if f.get('severity') == 'high']),
+            'Medium': len([f for f in findings if f.get('severity') == 'medium']),
+            'Low': len([f for f in findings if f.get('severity') == 'low']),
+        }
+        
+        data = [['Severity', 'Count']]
+        for sev, count in counts.items():
+            data.append([sev, str(count)])
+        data.append(['Total', str(sum(counts.values()))])
+        
+        table = Table(data, colWidths=[3*inch, 2*inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), COLORS['secondary']),
+            ('TEXTCOLOR', (0, 0), (-1, 0), COLORS['white']),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+            ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, COLORS['secondary']),
+        ]))
+        
+        return table
+    
+    def _create_compliance_summary_table(self, compliance_results: dict) -> Table:
+        """Create compliance frameworks summary table."""
+        data = [['Framework', 'Score', 'Passed', 'Failed']]
+        
+        for fw_id, result in compliance_results.items():
+            fw_name = result.get('framework', {}).get('name', fw_id)
+            controls = result.get('controls', {})
+            data.append([
+                fw_name[:30],  # Truncate long names
+                f"{result.get('score', 0):.1f}%",
+                str(controls.get('passed', 0)),
+                str(controls.get('failed', 0)),
+            ])
+        
+        table = Table(data, colWidths=[3*inch, 1.5*inch, 1*inch, 1*inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), COLORS['secondary']),
+            ('TEXTCOLOR', (0, 0), (-1, 0), COLORS['white']),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, COLORS['secondary']),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [COLORS['white'], colors.HexColor('#F8FAFC')]),
+        ]))
+        
+        return table
+    
+    def _format_risk_item(self, number: int, finding: dict) -> list:
+        """Format a risk item for the executive summary."""
+        elements = []
+        severity = finding.get('severity', 'medium').upper()
+        color = self._get_severity_color(severity.lower())
+        
+        elements.append(Paragraph(
+            f"<font color='{color}'><b>{number}. [{severity}]</b></font> {finding.get('title', 'Unknown')}",
+            self.styles['BodyText']
+        ))
+        elements.append(Paragraph(
+            finding.get('description', ''),
+            self.styles['RiskItem']
+        ))
+        if finding.get('recommendation'):
+            elements.append(Paragraph(
+                f"<b>Recommendation:</b> {finding.get('recommendation')}",
+                self.styles['RiskItem']
+            ))
+        elements.append(Spacer(1, 10))
+        
+        return elements
+    
+    def _format_detailed_finding(self, finding: dict) -> list:
+        """Format a detailed finding for the technical report."""
+        elements = []
+        severity = finding.get('severity', 'medium').upper()
+        color = self._get_severity_color(severity.lower())
+        
+        elements.append(Paragraph(
+            f"<font color='{color}'><b>[{severity}]</b></font> {finding.get('title', 'Unknown')}",
+            self.styles['BodyText']
+        ))
+        elements.append(Paragraph(
+            f"<b>ID:</b> {finding.get('id', 'N/A')} | <b>Category:</b> {finding.get('category', 'N/A')}",
+            self.styles['MetricLabel']
+        ))
+        elements.append(Spacer(1, 5))
+        elements.append(Paragraph(
+            f"<b>Description:</b> {finding.get('description', '')}",
+            self.styles['RiskItem']
+        ))
+        if finding.get('recommendation'):
+            elements.append(Paragraph(
+                f"<b>Recommendation:</b> {finding.get('recommendation')}",
+                self.styles['RiskItem']
+            ))
+        if finding.get('framework_controls'):
+            elements.append(Paragraph(
+                f"<b>Framework Controls:</b> {', '.join(finding.get('framework_controls', []))}",
+                self.styles['RiskItem']
+            ))
+        
+        return elements
     
     def generate_executive_report(
         self,

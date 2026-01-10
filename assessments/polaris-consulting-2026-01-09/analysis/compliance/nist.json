@@ -1,0 +1,397 @@
+{
+  "framework": {
+    "id": "nist",
+    "name": "NIST Special Publication 800-53 Revision 5",
+    "version": "5.0"
+  },
+  "score": 91.7,
+  "controls": {
+    "total": 60,
+    "passed": 58,
+    "failed": 2
+  },
+  "failed_controls": [
+    "CP-10",
+    "CP-9"
+  ],
+  "control_status": [
+    {
+      "id": "AC-1",
+      "name": "Policy and Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-2",
+      "name": "Account Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-2(1)",
+      "name": "Account Management | Automated System Account Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-2(3)",
+      "name": "Account Management | Disable Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-2(4)",
+      "name": "Account Management | Automated Audit Actions",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-3",
+      "name": "Access Enforcement",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-4",
+      "name": "Information Flow Enforcement",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-5",
+      "name": "Separation of Duties",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-6",
+      "name": "Least Privilege",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-6(1)",
+      "name": "Least Privilege | Authorize Access to Security Functions",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-6(5)",
+      "name": "Least Privilege | Privileged Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-6(9)",
+      "name": "Least Privilege | Log Use of Privileged Functions",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-7",
+      "name": "Unsuccessful Logon Attempts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-17",
+      "name": "Remote Access",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-17(1)",
+      "name": "Remote Access | Monitoring and Control",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AC-17(2)",
+      "name": "Remote Access | Protection of Confidentiality and Integrity",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-1",
+      "name": "Policy and Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-2",
+      "name": "Event Logging",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-3",
+      "name": "Content of Audit Records",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-4",
+      "name": "Audit Log Storage Capacity",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-6",
+      "name": "Audit Record Review, Analysis, and Reporting",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-6(1)",
+      "name": "Audit Record Review | Automated Process Integration",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-9",
+      "name": "Protection of Audit Information",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-11",
+      "name": "Audit Record Retention",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "AU-12",
+      "name": "Audit Record Generation",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CA-2",
+      "name": "Control Assessments",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CA-7",
+      "name": "Continuous Monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CA-8",
+      "name": "Penetration Testing",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CM-1",
+      "name": "Policy and Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CM-2",
+      "name": "Baseline Configuration",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CM-6",
+      "name": "Configuration Settings",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CM-7",
+      "name": "Least Functionality",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CM-8",
+      "name": "System Component Inventory",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CP-9",
+      "name": "System Backup",
+      "status": "fail",
+      "findings": [
+        {
+          "id": "BKP-001-4e855a40",
+          "title": "Azure Backup Not Configured",
+          "severity": "critical"
+        },
+        {
+          "id": "BKP-001-4e855a40",
+          "title": "Azure Backup Not Configured",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "CP-10",
+      "name": "System Recovery and Reconstitution",
+      "status": "fail",
+      "findings": [
+        {
+          "id": "BKP-001-4e855a40",
+          "title": "Azure Backup Not Configured",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "IA-1",
+      "name": "Policy and Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-2",
+      "name": "Identification and Authentication (Organizational Users)",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-2(1)",
+      "name": "Identification and Authentication | Multi-Factor Authentication to Privileged Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-2(2)",
+      "name": "Identification and Authentication | Multi-Factor Authentication to Non-Privileged Accounts",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-4",
+      "name": "Identifier Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-5",
+      "name": "Authenticator Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IA-5(1)",
+      "name": "Authenticator Management | Password-Based Authentication",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IR-4",
+      "name": "Incident Handling",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IR-5",
+      "name": "Incident Monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "IR-6",
+      "name": "Incident Reporting",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "RA-3",
+      "name": "Risk Assessment",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "RA-5",
+      "name": "Vulnerability Monitoring and Scanning",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-1",
+      "name": "Policy and Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-5",
+      "name": "Denial-of-Service Protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-7",
+      "name": "Boundary Protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-7(3)",
+      "name": "Boundary Protection | Access Points",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-8",
+      "name": "Transmission Confidentiality and Integrity",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-8(1)",
+      "name": "Transmission Confidentiality | Cryptographic Protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-12",
+      "name": "Cryptographic Key Establishment and Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-13",
+      "name": "Cryptographic Protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SC-28",
+      "name": "Protection of Information at Rest",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SI-2",
+      "name": "Flaw Remediation",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SI-3",
+      "name": "Malicious Code Protection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SI-4",
+      "name": "System Monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "SI-5",
+      "name": "Security Alerts, Advisories, and Directives",
+      "status": "pass",
+      "findings": []
+    }
+  ],
+  "findings_mapped": 1
+}

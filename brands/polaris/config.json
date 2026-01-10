@@ -1,0 +1,33 @@
+{
+  "brand_id": "polaris",
+  "company_name": "Polaris Consulting",
+  "logo_path": "logo.png",
+  "tagline": "Guiding Your Security Journey",
+  "colors": {
+    "primary": "#1B2B4B",
+    "secondary": "#2A3F5F",
+    "accent": "#00C4CC",
+    "text_primary": "#F8FAFC",
+    "text_secondary": "#94A3B8",
+    "success": "#22C55E",
+    "warning": "#EAB308",
+    "danger": "#EF4444"
+  },
+  "contact": {
+    "email": "security@polarisconsulting.com",
+    "phone": "",
+    "website": "https://polarisconsulting.com",
+    "address": ""
+  },
+  "footer_text": "© 2026 Polaris Consulting. Confidential - For Authorized Recipients Only.",
+  "disclaimers": [
+    "This assessment represents a point-in-time snapshot of your organization's security posture as of the assessment date.",
+    "Recommendations should be validated in a non-production environment before implementation.",
+    "This report is confidential and intended only for the recipient organization.",
+    "Polaris Consulting is not liable for any actions taken based on this assessment without proper validation and testing."
+  ],
+  "custom_sections": {
+    "about": "Polaris Consulting provides expert Azure and Microsoft 365 security assessments, helping organizations navigate their cloud security journey with confidence.",
+    "methodology": "Our assessment methodology combines automated data collection via Microsoft APIs with expert analysis to deliver actionable security insights aligned with industry best practices."
+  }
+}

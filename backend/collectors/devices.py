@@ -1,7 +1,7 @@
 """
 Device Collector for Azure Security Platform V2
 
-Collects device compliance and management data from Intune.
+Collects device compliance and management data from Microsoft Intune.
 """
 from datetime import datetime
 from typing import Optional
@@ -9,24 +9,14 @@ import structlog
 
 from ..services.graph_client import GraphClient
 from ..services.cache_service import CacheService
-from ..models.schemas import (
-    DeviceCompliance,
-    MetricTrend,
-    TrendDirection,
-)
+from ..models.schemas import DeviceCompliance, MetricTrend, TrendDirection
 
 logger = structlog.get_logger(__name__)
 
 
 class DeviceCollector:
     """
-    Collects device compliance metrics from Intune/Endpoint Manager.
-    
-    Features:
-    - Device compliance status
-    - Non-compliant device details
-    - Agent health (EDR/AV status)
-    - Unmanaged device detection
+    Collects device compliance metrics from Intune.
     """
     
     def __init__(
@@ -50,31 +40,22 @@ class DeviceCollector:
             if cached:
                 return DeviceCompliance(**cached)
         
-        # Fetch managed devices
+        # Fetch devices from Intune
         devices = await self._graph.get_managed_devices()
         
-        # Count by compliance state
-        compliant = 0
-        non_compliant = 0
-        unknown = 0
+        # Calculate compliance metrics
+        total_devices = len(devices)
+        compliant = len([d for d in devices if d.get("compliance_state") == "compliant"])
+        non_compliant = len([d for d in devices if d.get("compliance_state") == "noncompliant"])
+        unknown = total_devices - compliant - non_compliant
         
-        for device in devices:
-            state = device.get("compliance_state", "").lower()
-            if state == "compliant":
-                compliant += 1
-            elif state == "noncompliant":
-                non_compliant += 1
-            else:
-                unknown += 1
-        
-        total = len(devices)
-        compliance_percent = (compliant / total * 100) if total > 0 else 0
+        compliance_percent = (compliant / total_devices * 100) if total_devices > 0 else 0
         
         compliance = DeviceCompliance(
             compliant_count=compliant,
             non_compliant_count=non_compliant,
             unknown_count=unknown,
-            total_devices=total,
+            total_devices=total_devices,
             compliance_percent=round(compliance_percent, 1),
             last_updated=datetime.utcnow(),
         )
@@ -86,7 +67,7 @@ class DeviceCollector:
         logger.info(
             "device_compliance_collected",
             tenant_id=self._tenant_id,
-            total=total,
+            total=total_devices,
             compliant=compliant,
             non_compliant=non_compliant,
         )
@@ -95,139 +76,61 @@ class DeviceCollector:
     
     async def get_non_compliant_devices(self) -> list[dict]:
         """
-        Get detailed list of non-compliant devices with failure reasons.
+        Get list of non-compliant devices with details.
         """
         devices = await self._graph.get_managed_devices()
         
         non_compliant = []
         for device in devices:
-            if device.get("compliance_state", "").lower() == "noncompliant":
+            if device.get("compliance_state") == "noncompliant":
                 non_compliant.append({
-                    "device_id": device.get("id"),
                     "device_name": device.get("device_name"),
-                    "os_type": device.get("operating_system"),
+                    "user": device.get("user_display_name"),
+                    "email": device.get("user_principal_name"),
+                    "os": device.get("operating_system"),
                     "os_version": device.get("os_version"),
-                    "owner": device.get("user_principal_name"),
-                    "compliance_state": device.get("compliance_state"),
                     "last_sync": device.get("last_sync"),
                     "is_encrypted": device.get("is_encrypted", False),
-                    # In production, would fetch compliance policy details
-                    "failure_reasons": self._determine_failure_reasons(device),
                 })
         
         return non_compliant
     
-    async def get_agent_health(self) -> list[dict]:
+    async def get_device_summary_by_os(self) -> dict:
         """
-        Get EDR/Antivirus agent health status.
-        
-        Note: Requires Defender for Endpoint integration.
+        Get device count summary by operating system.
         """
         devices = await self._graph.get_managed_devices()
         
-        agent_health = []
+        os_counts = {}
         for device in devices:
-            agent_health.append({
-                "device_id": device.get("id"),
-                "device_name": device.get("device_name"),
-                "os_type": device.get("operating_system"),
-                # In production, would query Defender API
-                "defender_status": "active" if device.get("is_encrypted") else "unknown",
-                "av_signature_date": None,
-                "last_scan": None,
-                "last_sync": device.get("last_sync"),
-            })
+            os_name = device.get("operating_system", "Unknown")
+            os_counts[os_name] = os_counts.get(os_name, 0) + 1
         
-        return agent_health
+        return os_counts
     
-    async def get_unmanaged_devices(self) -> list[dict]:
+    async def get_stale_devices(self, days: int = 30) -> list[dict]:
         """
-        Get devices accessing corporate data that aren't managed.
-        
-        Note: Requires Azure AD sign-in logs analysis.
-        """
-        # In production, this would:
-        # 1. Query sign-in logs for unique devices
-        # 2. Compare against managed device list
-        # 3. Return devices not in Intune
-        
-        # For now, return empty (would need sign-in log access)
-        return []
-    
-    async def get_device_summary(self) -> dict:
-        """
-        Get comprehensive device summary for IT dashboard.
+        Get devices that haven't synced in specified number of days.
         """
         devices = await self._graph.get_managed_devices()
         
-        # Group by OS
-        os_breakdown = {}
-        encryption_status = {"encrypted": 0, "not_encrypted": 0}
-        stale_devices = []  # Devices not synced in 30+ days
+        from datetime import timedelta
+        cutoff = datetime.utcnow() - timedelta(days=days)
         
-        thirty_days_ago = datetime.utcnow().timestamp() - (30 * 24 * 60 * 60)
-        
+        stale = []
         for device in devices:
-            # OS breakdown
-            os_type = device.get("operating_system", "Unknown")
-            os_breakdown[os_type] = os_breakdown.get(os_type, 0) + 1
-            
-            # Encryption
-            if device.get("is_encrypted"):
-                encryption_status["encrypted"] += 1
-            else:
-                encryption_status["not_encrypted"] += 1
-            
-            # Stale check
             last_sync = device.get("last_sync")
             if last_sync:
                 try:
-                    sync_time = datetime.fromisoformat(str(last_sync).replace("Z", "")).timestamp()
-                    if sync_time < thirty_days_ago:
-                        stale_devices.append({
+                    sync_dt = datetime.fromisoformat(str(last_sync).replace("Z", "+00:00"))
+                    if sync_dt.replace(tzinfo=None) < cutoff:
+                        stale.append({
                             "device_name": device.get("device_name"),
+                            "user": device.get("user_display_name"),
                             "last_sync": last_sync,
-                            "owner": device.get("user_principal_name"),
+                            "days_since_sync": (datetime.utcnow() - sync_dt.replace(tzinfo=None)).days,
                         })
-                except:
+                except (ValueError, TypeError):
                     pass
         
-        return {
-            "total_devices": len(devices),
-            "os_breakdown": os_breakdown,
-            "encryption_status": encryption_status,
-            "stale_devices": stale_devices,
-            "stale_count": len(stale_devices),
-        }
-    
-    def _determine_failure_reasons(self, device: dict) -> list[str]:
-        """
-        Determine compliance failure reasons based on device properties.
-        
-        In production, would query compliance policy evaluation results.
-        """
-        reasons = []
-        
-        if not device.get("is_encrypted"):
-            reasons.append("Device not encrypted")
-        
-        # Check OS version (simplified)
-        os_version = device.get("os_version", "")
-        if "10.0.19041" in os_version or "10.0.18" in os_version:
-            reasons.append("OS version outdated")
-        
-        # Check last sync
-        last_sync = device.get("last_sync")
-        if last_sync:
-            try:
-                sync_time = datetime.fromisoformat(str(last_sync).replace("Z", ""))
-                days_since_sync = (datetime.utcnow() - sync_time).days
-                if days_since_sync > 14:
-                    reasons.append(f"Not synced in {days_since_sync} days")
-            except:
-                pass
-        
-        if not reasons:
-            reasons.append("Policy violation detected")
-        
-        return reasons
+        return stale

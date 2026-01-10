@@ -7,6 +7,7 @@ export function generateStaticParams() {
     { tenantId: 'acme-corp' },
     { tenantId: 'globex' },
     { tenantId: 'initech' },
+    { tenantId: 'cf47a479-9ed1-452d-896a-0e362307e969' }, // Polaris Consulting
   ]
 }
 

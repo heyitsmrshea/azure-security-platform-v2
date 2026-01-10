@@ -1,0 +1,18 @@
+{
+  "tenant_id": "undefined",
+  "dashboard_type": "executive",
+  "timestamp": "2026-01-10T07:03:10.135502",
+  "date": "20260110",
+  "data": {
+    "security_score": 635.92,
+    "compliance_score": 75.0,
+    "mfa_coverage": 79.5,
+    "device_compliance": 0.0,
+    "critical_risks": 0,
+    "high_risks": 0,
+    "total_alerts": 79,
+    "global_admins": 5,
+    "risky_users": 0,
+    "backup_health": 0.0
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "framework": {
+    "id": "soc2",
+    "name": "SOC 2 Trust Services Criteria",
+    "version": "2017"
+  },
+  "score": 92.8,
+  "controls": {
+    "total": 46,
+    "passed": 45,
+    "failed": 1
+  },
+  "failed_controls": [
+    "A1.2"
+  ],
+  "control_status": [
+    {
+      "id": "CC1.1",
+      "name": "COSO Principle 1",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC1.2",
+      "name": "COSO Principle 2",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC2.1",
+      "name": "COSO Principle 13",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC2.2",
+      "name": "COSO Principle 14",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC2.3",
+      "name": "COSO Principle 15",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC3.1",
+      "name": "COSO Principle 6",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC3.2",
+      "name": "COSO Principle 7",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC3.3",
+      "name": "COSO Principle 8",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC3.4",
+      "name": "COSO Principle 9",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC4.1",
+      "name": "COSO Principle 16",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC4.2",
+      "name": "COSO Principle 17",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC5.1",
+      "name": "COSO Principle 10",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC5.2",
+      "name": "COSO Principle 11",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC5.3",
+      "name": "COSO Principle 12",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.1",
+      "name": "Logical and Physical Access Controls",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.2",
+      "name": "Prior to Registration and Authorization",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.3",
+      "name": "Access Security Removal",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.6",
+      "name": "Logical Access Measures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.7",
+      "name": "Transmission and Movement",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC6.8",
+      "name": "Malicious Software Prevention",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC7.1",
+      "name": "Detection and Monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC7.2",
+      "name": "Security Monitoring",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC7.3",
+      "name": "Security Evaluation",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC7.4",
+      "name": "Incident Response",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC7.5",
+      "name": "Incident Recovery",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC8.1",
+      "name": "Change Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC9.1",
+      "name": "Risk Mitigation Through Controls",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "CC9.2",
+      "name": "Risk Assessment and Management",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "A1.1",
+      "name": "Availability Commitment",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "A1.2",
+      "name": "Environmental Protections",
+      "status": "fail",
+      "findings": [
+        {
+          "id": "BKP-001-4e855a40",
+          "title": "Azure Backup Not Configured",
+          "severity": "critical"
+        },
+        {
+          "id": "BKP-001-4e855a40",
+          "title": "Azure Backup Not Configured",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "A1.3",
+      "name": "Recovery Procedures",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "C1.1",
+      "name": "Confidential Information Identification",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "C1.2",
+      "name": "Confidentiality Disposal",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "PI1.1",
+      "name": "Processing Integrity Definitions",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "PI1.2",
+      "name": "Processing Inputs",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "PI1.3",
+      "name": "Processing Activities",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "PI1.4",
+      "name": "Processing Outputs",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "PI1.5",
+      "name": "Processing Errors",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P1.1",
+      "name": "Privacy Notice",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P2.1",
+      "name": "Privacy Choices and Consent",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P3.1",
+      "name": "Privacy Collection",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P4.1",
+      "name": "Privacy Use and Retention",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P5.1",
+      "name": "Privacy Access",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P6.1",
+      "name": "Privacy Disclosure and Notification",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P7.1",
+      "name": "Privacy Quality",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "P8.1",
+      "name": "Privacy Monitoring and Enforcement",
+      "status": "pass",
+      "findings": []
+    }
+  ],
+  "findings_mapped": 1
+}

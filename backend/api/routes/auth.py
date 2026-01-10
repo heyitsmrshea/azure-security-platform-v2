@@ -4,7 +4,7 @@ Authentication routes for Azure Security Platform V2
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from ..main import validate_token, get_current_user
+from api.dependencies import validate_token, get_current_user
 
 router = APIRouter()
 

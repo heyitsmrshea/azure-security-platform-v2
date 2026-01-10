@@ -11,10 +11,28 @@ export interface MetricTrend {
   period: string
 }
 
+export interface BenchmarkComparison {
+  average_score: number
+  average_percent: number
+  comparison: 'above' | 'below' | 'equal'
+  difference: number  // Positive = above average
+  size_category?: string
+}
+
+export interface IndustryBenchmarks {
+  your_score_percent: number
+  all_tenants?: BenchmarkComparison
+  similar_size?: BenchmarkComparison
+  industry?: BenchmarkComparison
+  organization_size?: number
+}
+
 export interface SecurityScore {
   current_score: number
   max_score: number
-  percentile?: number
+  score_percent: number  // Percentage: (current/max)*100 for display
+  percentile?: number    // Comparison vs other tenants
+  benchmarks?: IndustryBenchmarks  // Industry/size comparisons from Microsoft
   trend?: MetricTrend
   comparison_label?: string
   last_updated: string
@@ -162,7 +180,33 @@ export interface TopRisk {
 export interface DataFreshness {
   last_updated: string
   minutes_ago: number
-  status: 'fresh' | 'stale' | 'outdated'
+  status: 'fresh' | 'stale' | 'outdated' | 'live'
+}
+
+/**
+ * Permission status for each Graph API capability.
+ * Indicates which data sources are accessible.
+ */
+export interface PermissionStatus {
+  secure_score: boolean
+  mfa_registration: boolean
+  identity_protection: boolean
+  directory_roles: boolean
+  conditional_access: boolean
+  intune_devices: boolean
+  security_alerts: boolean
+  users: boolean
+}
+
+/**
+ * High-level configuration status summary.
+ */
+export interface ConfigurationStatus {
+  graph_connected: boolean
+  has_secure_score: boolean
+  has_identity_data: boolean
+  has_device_data: boolean
+  has_alert_data: boolean
 }
 
 export interface ExecutiveDashboard {
@@ -185,4 +229,8 @@ export interface ExecutiveDashboard {
   score_trend: ScoreTrend[]
   top_risks: TopRisk[]
   data_freshness: DataFreshness
+  
+  // Optional permission/configuration status from live data
+  permission_status?: PermissionStatus
+  configuration_status?: ConfigurationStatus
 }

@@ -10,10 +10,10 @@ This platform provides two dashboard views:
 
 ### Key Features
 
-- **Post-Ransomware Focus**: Backup health, recovery readiness (RTO/RPO), threat summary
-- **IT Accountability Metrics**: Patch SLA compliance, finding age distribution, MTTR
-- **Multi-Tenant**: MSP-style with CosmosDB partitioned by tenant
-- **Real-Time Data**: Microsoft Graph API and Azure Resource Manager integration
+- **Real-Time Data**: Live integration with Microsoft Graph API and Azure Resource Manager for up-to-the-minute security insights.
+- **Post-Ransomware Focus**: Specialized metrics for backup health, recovery readiness (RTO/RPO), and threat summary.
+- **IT Accountability Metrics**: Track patch SLA compliance, finding age distribution, and MTTR.
+- **Multi-Tenant**: Designed for MSPs with robust tenant isolation using CosmosDB partitions.
 
 ## Tech Stack
 
@@ -89,13 +89,15 @@ python -m venv venv
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements.txt
 
-# Set environment variables
-export AZURE_AD_TENANT_ID="your-tenant-id"
-export AZURE_AD_CLIENT_ID="your-client-id"
-export AZURE_AD_CLIENT_SECRET="your-client-secret"
-export REDIS_URL="redis://localhost:6379"
-export COSMOS_ENDPOINT="your-cosmos-endpoint"
-export COSMOS_KEY="your-cosmos-key"
+# Configure environment
+cp .env.example .env
+# Edit .env and add your Azure AD and database credentials:
+# - AZURE_AD_TENANT_ID
+# - AZURE_AD_CLIENT_ID
+# - AZURE_AD_CLIENT_SECRET
+# - REDIS_URL
+# - COSMOS_ENDPOINT
+# - COSMOS_KEY
 
 # Run the server
 uvicorn api.main:app --reload

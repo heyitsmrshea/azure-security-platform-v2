@@ -48,3 +48,7 @@ logs/
 *.pem
 *.key
 secrets/
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
