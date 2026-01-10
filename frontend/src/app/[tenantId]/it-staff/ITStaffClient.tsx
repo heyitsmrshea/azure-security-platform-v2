@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DashboardHeader } from '@/components/shared/DashboardHeader'
 import { StatusBadge, SeverityBadge } from '@/components/shared/StatusBadge'
 import { AlertQueue } from '@/components/it-staff/AlertQueue'
@@ -8,7 +8,7 @@ import { VulnerabilityView } from '@/components/it-staff/VulnerabilityView'
 import { AuditTrail, HighRiskOperations } from '@/components/it-staff/AuditTrail'
 import { DataTable } from '@/components/it-staff/DataTable'
 import { DepartmentBreakdown, mockMFAByDepartment, mockDevicesByDepartment } from '@/components/it-staff/DepartmentBreakdown'
-import { OffboardingStatus } from '@/components/it-staff/OffboardingStatus'
+import { OffboardingStatus, mockOffboardedUsers } from '@/components/it-staff/OffboardingStatus'
 import { cn, getTimeAgo } from '@/lib/utils'
 import {
     Bell,
@@ -26,134 +26,106 @@ import {
     UserMinus,
 } from 'lucide-react'
 
+import {
+    Alert, Vulnerability, MFAGap, PrivilegedUser, Device,
+    GuestUser, ThirdPartyApp, BackupJob, AuditLog, HighRiskOperation
+} from '@/types/it-staff'
+
 // Mock data
-const mockAlerts = [
-    {
-        id: 'alert-001',
-        title: 'Suspicious sign-in activity detected',
-        description: 'Multiple failed sign-in attempts followed by successful login from unusual location',
-        severity: 'high',
-        status: 'active',
-        category: 'Identity',
-        resource_name: 'john.doe@company.com',
-        resource_type: 'User',
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'alert-002',
-        title: 'Malware detected on device',
-        description: 'Windows Defender detected and quarantined malicious file',
-        severity: 'medium',
-        status: 'resolved',
-        category: 'Endpoint',
-        resource_name: 'DESKTOP-ABC123',
-        resource_type: 'Device',
-        created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'alert-003',
-        title: 'Unusual resource access pattern',
-        description: 'User accessed 50+ files in SharePoint within 5 minutes',
-        severity: 'medium',
-        status: 'investigating',
-        category: 'Data',
-        resource_name: 'Marketing Documents',
-        resource_type: 'SharePoint Site',
-        created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-    },
-]
-
-const mockVulnerabilities = [
-    {
-        id: 'vuln-001',
-        cve_id: 'CVE-2024-1234',
-        title: 'Remote Code Execution in Windows Server',
-        description: 'A remote code execution vulnerability exists in Windows Server',
-        severity: 'critical',
-        cvss_score: 9.8,
-        affected_resource: 'SQL-SERVER-01',
-        resource_type: 'Virtual Machine',
-        first_seen: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'open',
-        remediation: 'Apply KB5001234 security update',
-    },
-    {
-        id: 'vuln-002',
-        cve_id: 'CVE-2024-5678',
-        title: 'Privilege Escalation in Azure AD Connect',
-        description: 'Local privilege escalation vulnerability in AD Connect sync service',
-        severity: 'high',
-        cvss_score: 7.8,
-        affected_resource: 'ADCONNECT-01',
-        resource_type: 'Server',
-        first_seen: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'in_progress',
-        remediation: 'Upgrade to AD Connect version 2.1.x',
-    },
-    {
-        id: 'vuln-003',
-        cve_id: 'CVE-2024-9012',
-        title: 'Information Disclosure in IIS',
-        description: 'IIS may disclose sensitive information in error messages',
-        severity: 'medium',
-        cvss_score: 5.3,
-        affected_resource: 'WEB-SERVER-01',
-        resource_type: 'Virtual Machine',
-        first_seen: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'open',
-        remediation: 'Configure custom error pages',
-    },
-]
-
-const mockMFAGaps = [
-    { user_id: 'user-001', display_name: 'Jane Smith', email: 'jane.smith@company.com', department: 'Marketing', is_admin: false, last_sign_in: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-    { user_id: 'user-002', display_name: 'Bob Wilson', email: 'bob.wilson@company.com', department: 'Sales', is_admin: false, last_sign_in: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
-    { user_id: 'user-003', display_name: 'Alice Brown', email: 'alice.brown@company.com', department: 'Engineering', is_admin: false, last_sign_in: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
-]
-
-const mockPrivilegedUsers = [
-    { user_id: 'admin-001', display_name: 'IT Admin', email: 'it.admin@company.com', roles: ['Global Administrator'], is_pim_eligible: false, is_pim_active: true, last_activity: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), mfa_enabled: true },
-    { user_id: 'admin-002', display_name: 'Security Admin', email: 'security.admin@company.com', roles: ['Security Administrator', 'Compliance Administrator'], is_pim_eligible: true, is_pim_active: false, last_activity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), mfa_enabled: true },
-    { user_id: 'admin-003', display_name: 'User Admin', email: 'user.admin@company.com', roles: ['User Administrator'], is_pim_eligible: true, is_pim_active: true, last_activity: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), mfa_enabled: true },
-]
-
-const mockNonCompliantDevices = [
-    { device_id: 'device-001', device_name: 'LAPTOP-XYZ789', os_type: 'Windows', os_version: '10.0.19044', owner: 'john.doe@company.com', compliance_state: 'noncompliant', failure_reasons: ['Firewall disabled', 'Antivirus out of date'], last_check_in: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-    { device_id: 'device-002', device_name: 'DESKTOP-ABC456', os_type: 'Windows', os_version: '10.0.19041', owner: 'jane.smith@company.com', compliance_state: 'noncompliant', failure_reasons: ['OS version outdated'], last_check_in: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-]
-
-const mockGuestUsers = [
-    { user_id: 'guest-001', display_name: 'External Consultant', email: 'consultant@partner.com', source: 'Invited', created_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(), last_sign_in: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), access_level: 'Member of 3 Teams' },
-    { user_id: 'guest-002', display_name: 'Vendor Contact', email: 'support@vendor.com', source: 'B2B', created_at: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(), last_sign_in: new Date(Date.now() - 95 * 24 * 60 * 60 * 1000).toISOString(), access_level: 'SharePoint site access' },
-]
-
-const mockThirdPartyApps = [
-    { app_id: 'app-001', display_name: 'Slack', publisher: 'Slack Technologies', permissions: ['User.Read', 'Calendars.Read'], consent_type: 'admin', consented_by: 'IT Admin', consented_at: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString() },
-    { app_id: 'app-002', display_name: 'Zoom', publisher: 'Zoom Video Communications', permissions: ['User.Read', 'OnlineMeetings.ReadWrite'], consent_type: 'admin', consented_by: 'IT Admin', consented_at: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString() },
-    { app_id: 'app-003', display_name: 'Unknown App', publisher: 'Unknown Publisher', permissions: ['Mail.Read', 'Files.ReadWrite.All'], consent_type: 'user', consented_by: 'john.doe@company.com', consented_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() },
-]
-
-const mockBackupJobs = [
-    { job_id: 'job-001', protected_item: 'SQL-SERVER-01', vault_name: 'prod-backup-vault', status: 'Completed', start_time: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), duration_minutes: 15 },
-    { job_id: 'job-002', protected_item: 'FILE-SERVER-01', vault_name: 'prod-backup-vault', status: 'Completed', start_time: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), duration_minutes: 30 },
-    { job_id: 'job-003', protected_item: 'WEB-SERVER-01', vault_name: 'prod-backup-vault', status: 'Failed', start_time: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), duration_minutes: 5, error_message: 'Insufficient disk space on backup target' },
-]
-
-const mockAuditLogs = [
-    { id: 'audit-001', activity: 'Add member to role', category: 'RoleManagement', initiated_by: 'IT Admin', target_resource: 'User: john.doe@company.com', result: 'success', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-    { id: 'audit-002', activity: 'Update conditional access policy', category: 'Policy', initiated_by: 'Security Admin', target_resource: 'Policy: Require MFA for admins', result: 'success', timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() },
-    { id: 'audit-003', activity: 'Delete user', category: 'UserManagement', initiated_by: 'HR System', target_resource: 'User: former.employee@company.com', result: 'success', timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString() },
-]
-
-const mockHighRiskOps = [
-    { operation: 'Global Admin role assigned', initiated_by: 'IT Admin', target: 'new.admin@company.com', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), risk_reason: 'Highly privileged role assignment' },
-    { operation: 'Conditional Access policy disabled', initiated_by: 'Security Admin', target: 'Block legacy auth policy', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), risk_reason: 'Security control disabled' },
-]
+// Removed static imports for mock department data to use dynamic state
 
 type TabId = 'alerts' | 'vulnerabilities' | 'identity' | 'devices' | 'vendor' | 'backup' | 'audit' | 'offboarding'
 
 export function ITStaffClient({ tenantId }: { tenantId: string }) {
     const [activeTab, setActiveTab] = useState<TabId>('alerts')
+    const [isLoading, setIsLoading] = useState(true)
+
+    // Data State
+    const [alerts, setAlerts] = useState<Alert[]>([])
+    const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([])
+    const [mfaGaps, setMfaGaps] = useState<MFAGap[]>([])
+    const [privilegedUsers, setPrivilegedUsers] = useState<PrivilegedUser[]>([])
+    const [nonCompliantDevices, setNonCompliantDevices] = useState<Device[]>([])
+    const [guestUsers, setGuestUsers] = useState<GuestUser[]>([])
+    const [thirdPartyApps, setThirdPartyApps] = useState<ThirdPartyApp[]>([])
+    const [backupJobs, setBackupJobs] = useState<BackupJob[]>([])
+    const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
+    const [highRiskOps, setHighRiskOps] = useState<HighRiskOperation[]>([])
+
+    // Department Data
+    const [departmentMFAData, setDepartmentMFAData] = useState<any[]>([])
+    const [departmentDeviceData, setDepartmentDeviceData] = useState<any[]>([])
+
+    // Department mock data can remain static for now as it's visualization only, or could be fetched
+    // For this pass we'll keep the specialized visualization mocks static or move them to data.ts if critical.
+    // Given the previous instructions, let's focus on the main data tables first which are critical.
+
+    const fetchData = async () => {
+        setIsLoading(true)
+        try {
+            const { apiClient } = await import('@/lib/api-client')
+
+            // Fetch all data in parallel for the dashboard
+            // In a real app we might only fetch the active tab's data, but for this switch execution we load all to match previous behavior
+            const [
+                alertsData,
+                vulnData,
+                mfaData,
+                privData,
+                deviceData,
+                guestData,
+                appsData,
+                backupData,
+                auditData,
+                highRiskData,
+                deptAnalytics
+            ] = await Promise.all([
+                apiClient.getAlerts(tenantId),
+                apiClient.getVulnerabilities(tenantId),
+                apiClient.getMFAGaps(tenantId),
+                apiClient.getPrivilegedUsers(tenantId),
+                apiClient.getNonCompliantDevices(tenantId),
+                apiClient.getGuestUsers(tenantId),
+                apiClient.getThirdPartyApps(tenantId),
+                apiClient.getBackupJobs(tenantId),
+                apiClient.getAuditLogs(tenantId),
+                apiClient.getHighRiskOperations(tenantId),
+                apiClient.getDepartmentAnalytics(tenantId)
+            ])
+
+            // Handle paginated responses - API returns {items: [...]} for some endpoints
+            const extractItems = (data: any) => Array.isArray(data) ? data : (data?.items || [])
+
+            setAlerts(extractItems(alertsData))
+            setVulnerabilities(extractItems(vulnData))
+            setMfaGaps(extractItems(mfaData))
+            setPrivilegedUsers(extractItems(privData))
+            setNonCompliantDevices(extractItems(deviceData))
+            setGuestUsers(extractItems(guestData))
+            setThirdPartyApps(extractItems(appsData))
+            setBackupJobs(extractItems(backupData))
+            setAuditLogs(extractItems(auditData))
+            setHighRiskOps(extractItems(highRiskData))
+
+            // Set department data
+            if (deptAnalytics) {
+                setDepartmentMFAData(deptAnalytics.mfa_by_department || [])
+                setDepartmentDeviceData(deptAnalytics.devices_by_department || [])
+            }
+
+        } catch (e) {
+            console.error("Failed to fetch IT Staff data", e)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [tenantId])
+
+    const isDemo = tenantId === 'demo'
+    const offboardingData = isDemo ? mockOffboardedUsers : []
 
     const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
         { id: 'alerts', label: 'Alerts & Incidents', icon: <Bell className="w-4 h-4" /> },
@@ -166,14 +138,27 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
         { id: 'offboarding', label: 'Offboarding', icon: <UserMinus className="w-4 h-4" /> },
     ]
 
+    // Loading State
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background-primary flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+                    <p className="text-foreground-muted">Loading IT Staff Dashboard...</p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen bg-background-primary">
             <DashboardHeader
-                tenantName="Demo Organization"
+                tenantName={tenantId === 'demo' ? 'Demo Organization' : 'Polaris Consulting LLC'}
                 tenantId={tenantId}
                 title="IT Staff Dashboard"
                 minutesAgo={5}
-                onRefresh={() => console.log('Refresh')}
+                onRefresh={fetchData}
+                isRefreshing={isLoading}
             />
 
             <main className="p-6">
@@ -199,11 +184,11 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                 {/* Tab Content */}
                 <div className="space-y-6">
                     {activeTab === 'alerts' && (
-                        <AlertQueue alerts={mockAlerts} />
+                        <AlertQueue alerts={alerts} />
                     )}
 
                     {activeTab === 'vulnerabilities' && (
-                        <VulnerabilityView vulnerabilities={mockVulnerabilities} />
+                        <VulnerabilityView vulnerabilities={vulnerabilities} />
                     )}
 
                     {activeTab === 'identity' && (
@@ -215,7 +200,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                     Users Without MFA
                                 </h3>
                                 <DataTable
-                                    data={mockMFAGaps}
+                                    data={mfaGaps}
                                     columns={[
                                         { key: 'display_name', header: 'Name', sortable: true },
                                         { key: 'email', header: 'Email', sortable: true },
@@ -223,7 +208,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         {
                                             key: 'is_admin',
                                             header: 'Admin',
-                                            render: (user) => user.is_admin ? (
+                                            render: (user: any) => user.is_admin ? (
                                                 <span className="text-severity-high">Yes</span>
                                             ) : <span className="text-foreground-muted">No</span>
                                         },
@@ -231,7 +216,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                             key: 'last_sign_in',
                                             header: 'Last Sign-in',
                                             sortable: true,
-                                            render: (user) => <span className="text-foreground-muted">{getTimeAgo(user.last_sign_in)}</span>
+                                            render: (user: any) => <span className="text-foreground-muted">{getTimeAgo(user.last_sign_in)}</span>
                                         },
                                     ]}
                                     searchKeys={['display_name', 'email', 'department']}
@@ -245,14 +230,14 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                     Privileged Access Inventory
                                 </h3>
                                 <DataTable
-                                    data={mockPrivilegedUsers}
+                                    data={privilegedUsers}
                                     columns={[
                                         { key: 'display_name', header: 'Name', sortable: true },
                                         { key: 'email', header: 'Email', sortable: true },
                                         {
                                             key: 'roles',
                                             header: 'Roles',
-                                            render: (user) => (
+                                            render: (user: any) => (
                                                 <div className="flex flex-wrap gap-1">
                                                     {user.roles.map((role: string, i: number) => (
                                                         <span key={i} className="px-2 py-0.5 bg-accent/20 text-accent text-xs rounded">
@@ -265,7 +250,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         {
                                             key: 'is_pim_eligible',
                                             header: 'PIM Status',
-                                            render: (user) => (
+                                            render: (user: any) => (
                                                 <span className={cn(
                                                     'px-2 py-1 rounded text-xs',
                                                     user.is_pim_eligible ? 'bg-status-success/20 text-status-success' : 'bg-status-warning/20 text-status-warning'
@@ -277,7 +262,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         {
                                             key: 'mfa_enabled',
                                             header: 'MFA',
-                                            render: (user) => (
+                                            render: (user: any) => (
                                                 <StatusBadge status={user.mfa_enabled ? 'healthy' : 'critical'} label={user.mfa_enabled ? 'Enabled' : 'Disabled'} size="sm" />
                                             )
                                         },
@@ -285,7 +270,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                             key: 'last_activity',
                                             header: 'Last Activity',
                                             sortable: true,
-                                            render: (user) => <span className="text-foreground-muted">{getTimeAgo(user.last_activity)}</span>
+                                            render: (user: any) => <span className="text-foreground-muted">{getTimeAgo(user.last_activity)}</span>
                                         },
                                     ]}
                                     searchKeys={['display_name', 'email']}
@@ -296,12 +281,12 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <DepartmentBreakdown
                                     title="MFA Coverage by Department"
-                                    data={mockMFAByDepartment}
+                                    data={departmentMFAData}
                                     type="mfa"
                                 />
                                 <DepartmentBreakdown
                                     title="Device Compliance by Department"
-                                    data={mockDevicesByDepartment}
+                                    data={departmentDeviceData}
                                     type="device"
                                 />
                             </div>
@@ -315,13 +300,13 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                 Non-Compliant Devices
                             </h3>
                             <DataTable
-                                data={mockNonCompliantDevices}
+                                data={nonCompliantDevices}
                                 columns={[
                                     { key: 'device_name', header: 'Device', sortable: true },
                                     {
                                         key: 'os_type',
                                         header: 'OS',
-                                        render: (device) => (
+                                        render: (device: any) => (
                                             <span>{device.os_type} {device.os_version}</span>
                                         )
                                     },
@@ -329,7 +314,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                     {
                                         key: 'failure_reasons',
                                         header: 'Issues',
-                                        render: (device) => (
+                                        render: (device: any) => (
                                             <div className="flex flex-wrap gap-1">
                                                 {device.failure_reasons.map((reason: string, i: number) => (
                                                     <span key={i} className="px-2 py-0.5 bg-severity-high/20 text-severity-high text-xs rounded">
@@ -343,7 +328,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         key: 'last_check_in',
                                         header: 'Last Check-in',
                                         sortable: true,
-                                        render: (device) => <span className="text-foreground-muted">{getTimeAgo(device.last_check_in)}</span>
+                                        render: (device: any) => <span className="text-foreground-muted">{getTimeAgo(device.last_check_in)}</span>
                                     },
                                 ]}
                                 searchKeys={['device_name', 'owner']}
@@ -360,7 +345,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                     Guest User Inventory
                                 </h3>
                                 <DataTable
-                                    data={mockGuestUsers}
+                                    data={guestUsers}
                                     columns={[
                                         { key: 'display_name', header: 'Name', sortable: true },
                                         { key: 'email', header: 'Email', sortable: true },
@@ -370,7 +355,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                             key: 'last_sign_in',
                                             header: 'Last Sign-in',
                                             sortable: true,
-                                            render: (user) => {
+                                            render: (user: any) => {
                                                 const days = Math.floor((Date.now() - new Date(user.last_sign_in).getTime()) / (1000 * 60 * 60 * 24))
                                                 return (
                                                     <span className={cn(
@@ -394,14 +379,14 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                     Third-Party App Permissions
                                 </h3>
                                 <DataTable
-                                    data={mockThirdPartyApps}
+                                    data={thirdPartyApps}
                                     columns={[
                                         { key: 'display_name', header: 'App', sortable: true },
                                         { key: 'publisher', header: 'Publisher', sortable: true },
                                         {
                                             key: 'permissions',
                                             header: 'Permissions',
-                                            render: (app) => (
+                                            render: (app: any) => (
                                                 <div className="flex flex-wrap gap-1">
                                                     {app.permissions.slice(0, 3).map((perm: string, i: number) => (
                                                         <span key={i} className={cn(
@@ -422,7 +407,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         {
                                             key: 'consent_type',
                                             header: 'Consent',
-                                            render: (app) => (
+                                            render: (app: any) => (
                                                 <span className={cn(
                                                     'px-2 py-1 rounded text-xs capitalize',
                                                     app.consent_type === 'admin' ? 'bg-status-success/20 text-status-success' : 'bg-status-warning/20 text-status-warning'
@@ -446,7 +431,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                 Backup Job Status
                             </h3>
                             <DataTable
-                                data={mockBackupJobs}
+                                data={backupJobs}
                                 columns={[
                                     { key: 'protected_item', header: 'Protected Item', sortable: true },
                                     { key: 'vault_name', header: 'Vault', sortable: true },
@@ -454,7 +439,7 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         key: 'status',
                                         header: 'Status',
                                         sortable: true,
-                                        render: (job) => (
+                                        render: (job: any) => (
                                             <StatusBadge
                                                 status={job.status === 'Completed' ? 'healthy' : job.status === 'Failed' ? 'critical' : 'warning'}
                                                 label={job.status}
@@ -466,17 +451,17 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
                                         key: 'start_time',
                                         header: 'Started',
                                         sortable: true,
-                                        render: (job) => <span className="text-foreground-muted">{getTimeAgo(job.start_time)}</span>
+                                        render: (job: any) => <span className="text-foreground-muted">{getTimeAgo(job.start_time)}</span>
                                     },
                                     {
                                         key: 'duration_minutes',
                                         header: 'Duration',
-                                        render: (job) => <span>{job.duration_minutes} min</span>
+                                        render: (job: any) => <span>{job.duration_minutes} min</span>
                                     },
                                     {
                                         key: 'error_message',
                                         header: 'Error',
-                                        render: (job) => job.error_message ? (
+                                        render: (job: any) => job.error_message ? (
                                             <span className="text-severity-high text-sm">{job.error_message}</span>
                                         ) : '-'
                                     },
@@ -488,13 +473,13 @@ export function ITStaffClient({ tenantId }: { tenantId: string }) {
 
                     {activeTab === 'audit' && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <AuditTrail logs={mockAuditLogs} />
-                            <HighRiskOperations operations={mockHighRiskOps} />
+                            <AuditTrail logs={auditLogs} />
+                            <HighRiskOperations operations={highRiskOps} />
                         </div>
                     )}
 
                     {activeTab === 'offboarding' && (
-                        <OffboardingStatus />
+                        <OffboardingStatus users={offboardingData} />
                     )}
                 </div>
             </main>
